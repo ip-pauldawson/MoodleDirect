@@ -68,4 +68,63 @@ $settings->add(new admin_setting_configtext('turnitin_proxyuser', get_string("pr
 $settings->add(new admin_setting_configpasswordunmask('turnitin_proxypassword', get_string("proxypassword", "turnitintool"),
                    get_string("proxypassword_desc", "turnitintool"),''));
 
+// Following are default values for new instance
+
+$settings->add(new admin_setting_heading('turnitin_defaults', get_string('defaults','turnitintool'),
+                   get_string('defaults_desc', 'turnitintool')));
+
+$settings->add(new admin_setting_configselect('turnitin_default_type', get_string('type','turnitintool'),
+                   '', 1, turnitintool_filetype_array())); 
+                  
+$settings->add(new admin_setting_configselect('turnitin_default_numparts', get_string('numberofparts','turnitintool'),
+                   '', 1, array(1=>1,2=>2,3=>3,4=>4,5=>5))); 
+                  
+$options = array();
+$scales = get_scales_menu();
+foreach ($scales as $value => $scale) {
+    $options[-$value] = $scale;
+}
+for ($i=100; $i>=1; $i--) {
+    $options[$i] = $i;
+}
+$settings->add(new admin_setting_configselect('turnitin_default_grade', get_string('overallgrade','turnitintool'),
+                   '', 100, $options)); 
+unset( $options );
+
+$ynoptions = array(0 => get_string('no', 'turnitintool'),
+                   1 => get_string('yes', 'turnitintool'),
+                 );
+
+$settings->add(new admin_setting_configselect('turnitin_default_anon', get_string('anon','turnitintool'),
+                   '', 0, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_studentreports', get_string('studentreports','turnitintool'),
+                   '', 0, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_allowlate', get_string('allowlate','turnitintool'),
+                   '', 0, $ynoptions ));
+
+$genoptions = array( 0 => get_string('genimmediately1','turnitintool'), 1 => get_string('genimmediately2','turnitintool'), 2 => get_string('genduedate','turnitintool'));
+$settings->add(new admin_setting_configselect('turnitin_default_reportgenspeed', get_string('reportgenspeed','turnitintool'),
+                   '', 0, $genoptions ));
+
+$suboptions = array( 0 => get_string('norepository','turnitintool'), 1 => get_string('standardrepository','turnitintool'));
+$settings->add(new admin_setting_configselect('turnitin_default_submitpapersto', get_string('submitpapersto','turnitintool'),
+                   '', 1, $suboptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_spapercheck', get_string('spapercheck','turnitintool'),
+                   '', 1, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_internetcheck', get_string('internetcheck','turnitintool'),
+                   '', 1, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_journalcheck', get_string('journalcheck','turnitintool'),
+                   '', 1, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_excludebiblio', get_string('excludebiblio','turnitintool'),
+                   '', 0, $ynoptions ));
+
+$settings->add(new admin_setting_configselect('turnitin_default_excludequoted', get_string('excludequoted','turnitintool'),
+                   '', 0, $ynoptions ));
+				   
 /* ?> */
