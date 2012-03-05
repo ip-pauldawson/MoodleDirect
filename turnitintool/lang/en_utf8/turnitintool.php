@@ -65,6 +65,8 @@ $string['dateformat_help'] = 'Use this setting to set the date format us
 $string['defaultdtdue'] = 'Default Due Date';
 $string['defaultdtpost'] = 'Default Post Date';
 $string['defaultdtstart'] = 'Default Start Date';
+$string['defaults'] = 'Default settings';
+$string['defaults_desc'] = 'The following settings will be the default settings used for new instances of the Turnitin Tool';
 $string['defaultsoverwrite'] = 'Overwrite Dates';
 $string['defaultsoverwrite_help'] = 'This setting will be displayed when updating an assignment. Selecting yes here will reset the assignment start date, due date and post date for all assignment parts to be the same as the values you enter in the default date settings.';
 $string['delete'] = 'Delete';
@@ -412,3 +414,4 @@ $string['relinkusers'] = 'Relink Users';
 $string['unlinkrelinkusers'] = 'Unlink / Relink Turnitin Users';
 $string['usersunlinkrelink'] = 'Users to Unlink / Relink';
 $string['turnitinid'] = 'Turnitin ID';
+//?>
