@@ -329,18 +329,26 @@ if ($do=='intro') {
     } else {
         $notice=NULL;
     }
+    // Update the GradeBook to make sure the grade stays 'hidden' until and wasn't revealed by modedit
+    turnitintool_grade_item_update( $turnitintool );
     echo turnitintool_duplicatewarning($cm,$turnitintool);
     echo turnitintool_introduction($cm,$turnitintool,$notice);
 }
 
 if ($do=='submissions') {
-    echo turnitintool_view_student_submissions($cm,$turnitintool);
-    if (isset($notice["error"])) {
-        turnitintool_box_start('generalbox boxwidthwide boxaligncenter error', 'errorbox');
-        echo $notice["error"];
-        turnitintool_box_end();
+    if ( !has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id)) 
+         AND !has_capability('mod/turnitintool:submit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+        turnitintool_print_error('permissiondeniederror','turnitintool');
+        exit();
+    } else {
+        echo turnitintool_view_student_submissions($cm,$turnitintool);
+        if (isset($notice["error"])) {
+            turnitintool_box_start('generalbox boxwidthwide boxaligncenter error', 'errorbox');
+            echo $notice["error"];
+            turnitintool_box_end();
+        }
+        echo turnitintool_view_submission_form($cm,$turnitintool);
     }
-    echo turnitintool_view_submission_form($cm,$turnitintool);
 }
 
 if ($do=='allsubmissions') {

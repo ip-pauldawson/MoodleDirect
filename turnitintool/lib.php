@@ -259,33 +259,8 @@ function turnitintool_add_instance($turnitintool) {
     }
 
     // Define grade settings in Moodle 1.9 and above
-    @include_once($CFG->dirroot."/lib/gradelib.php");
-    if (function_exists('grade_update')) {
-        $cm=get_coursemodule_from_instance("turnitintool", $insertid, $turnitintool->course);
-        $module=turnitintool_get_record('modules','name','turnitintool');
-        $params['itemname'] = $turnitintool->name;
-        $params['idnumber'] = $turnitintool->cmidnumber;
-
-        if ($turnitintool->grade < 0) { // If we're using a grade scale
-            $params['gradetype'] = GRADE_TYPE_SCALE;
-            $params['scaleid']   = -$turnitintool->grade;
-        } else if ($turnitintool->grade > 0) { // If we are using a grade value
-            $params['gradetype'] = GRADE_TYPE_VALUE;
-            $params['grademax']  = $turnitintool->grade;
-            $params['grademin']  = 0;
-        } else { // If we aren't using a grade at all
-            $params['gradetype'] = GRADE_TYPE_NONE;
-        }
-
-        $lastpart=turnitintool_get_record('turnitintool_parts','turnitintoolid',
-                $insertid,'','','','','max(dtpost)');
-        $lastpart=current($lastpart);
-        $params['hidden']=$lastpart;
-
-        $params['grademin']  = 0;
-        grade_update('mod/turnitintool', $turnitintool->course, 'mod', 'turnitintool',
-                $insertid, 0, NULL, $params);
-    }
+    $turnitintool->id = $insertid;
+    turnitintool_grade_item_update( $turnitintool );
     // ]]]]
 
     $tii->endSession();
@@ -577,17 +552,32 @@ function turnitintool_update_instance($turnitintool) {
     // ]]]]
 
     $turnitintool->timemodified=time();
-
     $update=turnitintool_update_record("turnitintool", $turnitintool);
 
     // Define grade settings in Moodle 1.9 and above
+    turnitintool_grade_item_update( $turnitintool );
+    
+    $tii->endSession();
 
+    return $update;
+}
+
+/**
+ * Create grade item for given assignment
+ *
+ * @param object $turnitintool object with extra cmidnumber (if available)
+ * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
+ */
+
+function turnitintool_grade_item_update( $turnitintool, $grades=null ) {
+    global $CFG, $DB;
     @include_once($CFG->dirroot."/lib/gradelib.php");
-    if (function_exists('grade_update')) {
+    if ( function_exists( 'grade_update' ) ) {
+        $params = array();
         $cm=get_coursemodule_from_instance("turnitintool", $turnitintool->id, $turnitintool->course);
-        $module=turnitintool_get_record('modules','name','turnitintool');
         $params['itemname'] = $turnitintool->name;
-        $params['idnumber'] = $turnitintool->cmidnumber;
+        $params['idnumber'] = isset( $cm->idnumber ) ? $cm->idnumber : null;
 
         if ($turnitintool->grade < 0) { // If we're using a grade scale
             $params['gradetype'] = GRADE_TYPE_SCALE;
@@ -605,11 +595,9 @@ function turnitintool_update_instance($turnitintool) {
         $params['hidden']=$lastpart;
 
         $params['grademin']  = 0;
-        grade_update('mod/turnitintool', $turnitintool->course, 'mod', 'turnitintool', $turnitintool->id, 0, NULL, $params);
+        return grade_update('mod/turnitintool', $turnitintool->course, 'mod', 'turnitintool', $turnitintool->id, 0, $grades, $params);
     }
-    $tii->endSession();
-
-    return $update;
+    return;
 }
 
 /**
@@ -718,7 +706,6 @@ function turnitintool_refresh_events($courseid=0) {
         if (!$parts = turnitintool_get_records("turnitintool_parts","turnitintoolid",$turnitintool->id)) {
             $result=false;
         }
-
         foreach ($parts as $part) {
             $event->timestart=$part->dtdue;
 
@@ -3237,15 +3224,23 @@ function turnitintool_view_all_submissions($cm,$turnitintool,$orderby='1') {
                 $submission["maxdate"] = $submission_data->maxdate;
                 $submission["userid"] = $submission_data->userid;
                 $submission["objectid"] = $submission_data->objectid;
-                if (isset($users[$user->id])) {
+                if ( isset($users[$user->id]) ) {
                     // user is a moodle user ie in array from moodle user call above
                     $submission["nonmoodle"] = 0;
                     $users[$submission["userid"]] = $submission;
-                } else if (turnitintool_module_group($cm)==0) {
+                } else if ( turnitintool_module_group($cm)==0 ) {
                     // user is not a moodle user ie not in array from moodle user call above
                     // and group list is set to all users
                     $submission["nonmoodle"] = 1;
                     $users[$submission["userid"]] = $submission;
+                }
+            }
+        }
+        // Filter out non submkitters if the option is set ($turnitintool->shownonsubmission)
+        if ( !$turnitintool->shownonsubmission ) {
+            foreach ( $users as $user ) {
+                if ( is_null($user["avscore"]) ) {
+                    unset( $users[ $user["userid"] ] );
                 }
             }
         }
@@ -3819,7 +3814,7 @@ function turnitintool_view_all_submissions($cm,$turnitintool,$orderby='1') {
                     // Do Submission to Turnitin Form / Object ID
                     // ###########################################
                     $modified='-';
-                    if (empty($submission->submission_objectid) AND $turnitintool->autosubmission AND !empty($submission_filename)) {
+                    if (empty($submission->submission_objectid) AND $turnitintool->autosubmission) {
                         $modified='<div class="submittoLinkSmall"><img src="'.$CFG->wwwroot.'/mod/turnitintool/icon.gif" /><a href="'.$CFG->wwwroot.
                                 '/mod/turnitintool/view.php'.'?id='.$cm->id.'&up='.$submission->id.'">'.get_string('submittoturnitin','turnitintool').'</a></div>';
                     } else if (!is_null($submission->id)) {
@@ -4298,6 +4293,7 @@ function turnitintool_update_grades($cm,$turnitintool,$post) {
                 $cm=get_coursemodule_from_instance("turnitintool", $turnitintool->id, $turnitintool->course);
                 $params['idnumber'] = $cm->idnumber;
                 grade_update('mod/turnitintool', $turnitintool->course, 'mod', 'turnitintool', $turnitintool->id, 0, $grades, $params);
+                
             }
 
         }
@@ -5023,7 +5019,7 @@ function turnitintool_view_submission_form($cm,$turnitintool,$submissionid=NULL)
                     $checked=' checked';
                 }
 
-                if (has_capability('mod/turnitintool:grade', $context)) {
+                if ( has_capability('mod/turnitintool:grade', $context) OR empty($CFG->turnitin_agreement) ) {
                     unset($cells);
                     $cells[0]->class='cell c0';
                     $cells[0]->data='';
@@ -5593,7 +5589,16 @@ function turnitintool_upload_submission($cm,$turnitintool,$submission) {
         activityLog("SUBID: ".$submission->id." - Using pre 2.0 File API","UPLOAD");
     }
 
-    $tii->joinClass($post,get_string('joiningclass','turnitintool',''));
+    // Give join class 3 tries, fix for 220 errors, fail over and log failure in activity logs
+    for ( $i = 0; $i < 3; $i++ ) {
+        $tii->joinClass($post,get_string('joiningclass','turnitintool',''));
+        if ( !$tii->getRerror() ) {
+            break;
+        } else {
+            $loaderbar->total = $loaderbar->total + 1;
+            activityLog( "Failed: " . $tii->getRcode(), "JOINCLASS FAILED" );
+        }
+    }
 
     if ($tii->getRerror()) {
         $reason=($tii->getAPIunavailable()) ? get_string('apiunavailable','turnitintool') : $tii->getRmessage();
@@ -5672,7 +5677,7 @@ function turnitintool_filetype_array($setup=true) {
         2 => get_string('textsubmission','turnitintool')
     );
     if ($setup) {
-        $output[NULL] = '--------------------';
+        $output[3] = '--------------------';
         $output[0] = get_string('anytype','turnitintool');
     }
     return $output;
@@ -6101,6 +6106,7 @@ function turnitintool_buildgrades($turnitintool,$thisuser) {
         $grades = new stdClass();
         $grades->userid = $thisuser->id;
         $gradearray=turnitintool_grades($turnitintool->id);
+
         if ($turnitintool->grade < 0) {
             //Using a scale
             $overallgrade=( $gradearray->grades[$thisuser->id]=='-' ) ? NULL : $gradearray->grades[$thisuser->id];

@@ -412,3 +412,6 @@ $string['relinkusers'] = 'Relink Users';
 $string['unlinkrelinkusers'] = 'Unlink / Relink Turnitin Users';
 $string['usersunlinkrelink'] = 'Users to Unlink / Relink';
 $string['turnitinid'] = 'Turnitin ID';
+
+$string['defaults'] = 'Default settings';
+$string['defaults_desc'] = 'The following settings will be the default settings used for new instances of the Moodle Direct Turnitin Assignment';

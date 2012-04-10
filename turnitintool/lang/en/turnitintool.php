@@ -238,7 +238,7 @@ $string['studentstatus'] = 'Submitted {$a->modified} (Paper ID: {$a->objectid})'
 $string['submission'] = 'Submission';
 $string['submissionagreementerror'] = 'You must accept the agreement for this submission';
 $string['submissionconnecterror'] = 'There was an error connecting to Turnitin. Submission has been queued.';
-$string['submissiondelete'] = 'Delete&#39;;';
+$string['submissiondelete'] = 'Delete&#39;';
 $string['submissiondeleteerror'] = 'Could not delete submissions';
 $string['submissionfileerror'] = 'You must attach a file for submission';
 $string['submissionfiletypeerror'] = 'File type not allowed. Allowed types are ({$a})';
@@ -412,3 +412,6 @@ $string['relinkusers'] = 'Relink Users';
 $string['unlinkrelinkusers'] = 'Unlink / Relink Turnitin Users';
 $string['usersunlinkrelink'] = 'Users to Unlink / Relink';
 $string['turnitinid'] = 'Turnitin ID';
+
+$string['defaults'] = 'Default settings';
+$string['defaults_desc'] = 'The following settings will be the default settings used for new instances of the Moodle Direct Turnitin Assignment';

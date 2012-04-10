@@ -184,7 +184,7 @@ class turnitintool_commclass {
             foreach ( $this->_xmlvalues as $data ) {
                 $result = array();
                 $trimval = isset( $data['value'] ) ? trim( $data['value'] ) : null;
-                if ( isset( $data['value'] ) AND !empty( $trimval ) )  {
+                if ( isset( $data['value'] ) AND (!empty( $trimval ) OR $trimval == "0" ) )  {
                     $result['value'] = $data['value'];
                 }
                 if ( $data['type'] == 'open' ) {
@@ -470,6 +470,7 @@ class turnitintool_commclass {
     function doLogging($vars,$result) {
         global $CFG;
         if ($CFG->turnitin_enablediagnostic) {
+            $this->result=$result;
             // ###### DELETE SURPLUS LOGS #########
             $numkeeps=10;
             $prefix="commslog_";
@@ -495,7 +496,7 @@ class turnitintool_commclass {
             $fid = isset($vars["fid"]) ? $vars["fid"] : "N/A";
             $fcmd = isset($vars["fcmd"]) ? $vars["fcmd"] : "N/A";
             $output="== FID:".$fid." | FCMD:".$fcmd." ===========================================================".$newline;
-            if ($this->getRerror() AND $fid!="N/A") {
+            if ($this->getRcode() > 100 OR is_null($this->getRcode()) ) {
                 $output.="== SUCCESS ===================================================================".$newline;
             } else if ($fid!="N/A") {
                 $output.="== ERROR =====================================================================".$newline;

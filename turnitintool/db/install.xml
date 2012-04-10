@@ -83,6 +83,9 @@
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+            </INDEXES>
         </TABLE>
         <TABLE NAME="turnitintool_courses" COMMENT="Turnitin Tools Courses" NEXT="turnitintool_submissions" PREVIOUS="turnitintool_users">
             <FIELDS>

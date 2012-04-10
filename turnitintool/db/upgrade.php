@@ -382,6 +382,26 @@ function xmldb_turnitintool_upgrade($oldversion) {
     		
     	}
     }
+    
+    if ($result && $oldversion < 2012030501) {
+    	if (is_callable(array($DB,'get_manager'))) {
+            $dbman=$DB->get_manager();
+            $table = new xmldb_table('turnitintool_users');
+            // Launch add index userid
+            $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        } else {
+            $table = new XMLDBTable('turnitintool_users');
+            // Launch add index userid
+            $index = new XMLDBIndex('userid');
+            $index->setAttributes(XMLDB_INDEX_UNIQUE, array('userid'));
+            if (index_exists($table, $index)) {
+                $result = $result && add_index($table, $index);
+            }
+        }
+    }
 
     return $result;
 }

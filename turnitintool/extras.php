@@ -17,7 +17,7 @@
         admin_externalpage_setup('managemodules');
     }
 
-    if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+    if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/turnitintool.js');
         $PAGE->requires->js($jsurl,true);
         $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
@@ -229,9 +229,10 @@
                 $table->rows[$i]->class='row r' . (($i%2) ? 0 : 1);
                 $table->rows[$i]->cells=$cells;
             }
-        }
 
-        turnitintool_print_table($table);
+            turnitintool_print_table($table);
+
+        }
 
         echo '</div><input style="margin-top: 7px;" name="unlink" value="Unlink Users" type="submit" /> <input style="margin-top: 7px;" name="relink" value="Relink Users" type="submit" /></form>
 ';

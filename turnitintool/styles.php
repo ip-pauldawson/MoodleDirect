@@ -267,6 +267,7 @@
     display: inline;
 }
 #turnitintool_style .toplinkTabs {
+    min-width: 720px;
     margin: 0 auto 0 auto;
     width: 85%;
     padding: 0px;
@@ -309,6 +310,7 @@
     font-size: small;
 }
 #turnitintool_style .gradeTable {
+    min-width: 720px;
     border: 1px solid #CDCDCD;
 }
 #turnitintool_style .gradeTable td {

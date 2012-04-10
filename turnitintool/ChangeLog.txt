@@ -1,3 +1,8 @@
+2012-03-05 : Fixed an issue where the option "List only students that have made submissions" on Option tab did not work
+2012-03-05 : Added some workarounds for issue where grades were being revealed prematurely (http://tracker.moodle.org/browse/MDL-31487)
+2012-03-05 : Fixed XML parser error where 0% similarity was being displayed as pending
+2012-03-05 : Merged contributed code for default assignment settings (thanks to Howard Miller)
+2012-03-05 : Fixed issue where guests could see student submission form but not submit (now correctly shows permission denied error)
 2012-02-02 : Turned off Grade Reports and Bulk Download in Anonymous Marking assignments until post date
 2012-02-02 : Removed BOMs from language packs
 2012-02-02 : Fixed a pass by reference bug in the "check for submissions" function
