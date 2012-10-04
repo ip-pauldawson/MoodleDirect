@@ -65,12 +65,13 @@ class turnitintool_commclass {
     var $curlerror;
     /**
      * A backward compatible constructor / destructor method that works in PHP4 to emulate the PHP5 magic method __construct
+     * Disabled to remove strict warnings, only useful for PHP 4 and there shouldn't be too many PHP 4 installs around by now
      */
-    function turnitintool_commclass($iUid,$iUfn,$iUln,$iUem,$iUtp,&$iLoaderBar) {
+    /*function turnitintool_commclass($iUid,$iUfn,$iUln,$iUem,$iUtp,&$iLoaderBar) {
         if (version_compare(PHP_VERSION,"5.0.0","<")) {
             $this->__construct($iUid,$iUfn,$iUln,$iUem,$iUtp,$iLoaderBar);
         }
-    }
+    }*/
     /**
      * The constructor for the class, Calls the startsession() method if we are using sessions
      *
@@ -88,6 +89,15 @@ class turnitintool_commclass {
         $this->apiurl=$CFG->turnitin_apiurl;
         $this->accountid=$CFG->turnitin_account_id;
         $this->uid=$iUid;
+        
+        // Convert the email, firstname and lastname to psuedos for students if the option is set in config
+        // Unless the user is already logged as a tutor then use real details
+        if ( isset( $CFG->turnitin_enablepseudo ) AND $CFG->turnitin_enablepseudo == 1 AND $iUtp == 1 AND !turnitintool_istutor( $iUem ) ) {
+            $iUfn = turnitintool_pseudofirstname();
+            $iUln = turnitintool_pseudolastname( $iUem );
+            $iUem = turnitintool_pseudoemail( $iUem );
+        }
+        
         $this->ufn=$iUfn;
         $this->uln=$iUln;
         $this->uem=$iUem;
@@ -254,12 +264,24 @@ class turnitintool_commclass {
             $output[$objectid]["lastname"]=(isset($values['LASTNAME']['value'])) ? $values['LASTNAME']['value'] : '';
             $output[$objectid]["title"] = html_entity_decode($values['TITLE']['value'],ENT_QUOTES,"UTF-8");
             $output[$objectid]["similarityscore"]=(isset($values['SIMILARITYSCORE']['value']) AND $values['SIMILARITYSCORE']['value']!="-1") ? $values['SIMILARITYSCORE']['value'] : NULL;
-
+            
+            $overlap = $values['OVERLAP']['value'];
+            $transmatch_overlap = ( isset( $values['TRANSLATED_MATCHING'][0] ) ) ? $values['TRANSLATED_MATCHING'][0]['OVERLAP']['value'] : 0;
+            if ( $transmatch_overlap > $overlap ) {
+                $high_overlap = $transmatch_overlap;
+                $output[$objectid]["transmatch"] = 1;
+            } else {
+                $high_overlap = $overlap;
+                $output[$objectid]["transmatch"] = 0;
+            }
+            
             $output[$objectid]["overlap"]=(isset($values['OVERLAP']['value']) // this is the Originality Percentage Score
-            AND $values['OVERLAP']['value']!="-1"
-            AND !is_null($output[$objectid]["similarityscore"])) ? $values['OVERLAP']['value'] : NULL;
+                AND $values['OVERLAP']['value']!="-1"
+                AND !is_null($output[$objectid]["similarityscore"])) ? $high_overlap : NULL;
 
-            $output[$objectid]["grademark"]=(isset($values['SCORE']['value']) AND $values['SCORE']['value']!="-1") ? $values['SCORE']['value'] : NULL;
+            $output[$objectid]["grademark"]=(isset($values['SCORE']['value'])
+                AND $values['SCORE']['value']!="-1"
+                AND !is_null($values['SCORE']['value'])) ? $values['SCORE']['value'] : NULL;
             $output[$objectid]["anon"]=(isset($values['ANON']['value']) AND $values['ANON']['value']!="-1") ? $values['ANON']['value'] : NULL;
             $output[$objectid]["grademarkstatus"]=(isset($values['GRADEMARKSTATUS']['value']) AND $values['GRADEMARKSTATUS']['value']!="-1") ? $values['GRADEMARKSTATUS']['value'] : NULL;
             $output[$objectid]["date_submitted"]=(isset($values['DATE_SUBMITTED']['value']) AND $values['DATE_SUBMITTED']['value']!="-1") ? $values['DATE_SUBMITTED']['value'] : NULL;
@@ -469,7 +491,7 @@ class turnitintool_commclass {
      */
     function doLogging($vars,$result) {
         global $CFG;
-        if ($CFG->turnitin_enablediagnostic) {
+        if ( $CFG->turnitin_enablediagnostic AND !empty( $vars ) ) {
             $this->result=$result;
             // ###### DELETE SURPLUS LOGS #########
             $numkeeps=10;
@@ -580,9 +602,9 @@ class turnitintool_commclass {
                 'ctl'=>stripslashes($post->ctl),
                 'assignid'=>$post->assignid,
                 'utp'=>2,
-                'dtstart'=>userdate($post->dtstart,'%Y-%m-%d %H:%M:%S',99,false),
-                'dtdue'=>userdate($post->dtdue,'%Y-%m-%d %H:%M:%S',99,false),
-                'dtpost'=>userdate($post->dtpost,'%Y-%m-%d %H:%M:%S',99,false),
+                'dtstart'=>userdate($post->dtstart,'%Y-%m-%d %H:%M:%S',20,false), // Default Moodle Timezone
+                'dtdue'=>userdate($post->dtdue,'%Y-%m-%d %H:%M:%S',20,false), // Default Moodle Timezone
+                'dtpost'=>userdate($post->dtpost,'%Y-%m-%d %H:%M:%S',20,false), // Default Moodle Timezone
                 'fid'=>4,
                 'uid'=>$userid,
                 'uem'=>$this->uem,
@@ -647,6 +669,9 @@ class turnitintool_commclass {
             $assigndata["ets_usage"]=$post->erater_usage;
             $assigndata["ets_mechanics"]=$post->erater_mechanics;
             $assigndata["ets_style"]=$post->erater_style;
+        }
+        if (isset($post->transmatch)) {
+            $assigndata["translated_matching"]=$post->transmatch;
         }
         if (isset($post->idsync)) {
             $assigndata['idsync']=$post->idsync;
@@ -783,6 +808,7 @@ class turnitintool_commclass {
                 $pos13 = $this->_xmlkeys['ANON'][$i];
                 $pos14 = $this->_xmlkeys['MAXPOINTS'][$i];
 
+                $output = new stdClass();
                 $output->assign = $this->_xmlvalues[$pos1]['value'];
                 $output->dtstart = strtotime($this->_xmlvalues[$pos2]['value']);
                 $output->dtdue = strtotime($this->_xmlvalues[$pos3]['value']);
@@ -881,6 +907,7 @@ class turnitintool_commclass {
         } else {
             $userid=$this->uid;
         }
+        $ced = isset( $post->ced ) ? $post->ced : null;
         if ( $type == "INSERT" ) {
             $fcmd = 2;
         } else {
@@ -898,7 +925,7 @@ class turnitintool_commclass {
                 'ctl'=>stripslashes($post->ctl),
                 'uid'=>$userid,
                 'uem'=>$this->uem,
-                'ced'=>date('Ymd',strtotime('+12 months')), // extend the class end date to be a year from now,
+                'ced'=>$ced,
                 'ufn'=>$this->ufn,
                 'uln'=>$this->uln
         );
@@ -1521,7 +1548,9 @@ class turnitintool_commclass {
             'tr'=>'tr',
             'ca'=>'es',
             'sv'=>'sv',
-            'nl'=>'nl'
+            'nl'=>'nl',
+            'fi'=>'fi',
+            'ar'=>'ar'
         );
         $langcode = (isset($langarray[$langcode])) ? $langarray[$langcode] : 'en_us';
         return $langcode;
