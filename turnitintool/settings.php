@@ -7,8 +7,6 @@
 require_once($CFG->dirroot.'/mod/turnitintool/lib.php');
 require_once($CFG->dirroot.'/mod/turnitintool/version.php');
 
-global $RESOURCE_WINDOW_OPTIONS;
-
 $upgrade = turnitintool_updateavailable( $module );
 $upgradeavailable = ( is_null( $upgrade ) ) ? '' : ' <a href="'.$upgrade.'"><i><b>'.get_string('upgradeavailable','turnitintool').'</b></i></a> ';
 
