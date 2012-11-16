@@ -5838,7 +5838,7 @@ function turnitintool_tempfile($suffix) {
  * @param object $submission The submission object for this submission
  */
 function turnitintool_upload_submission($cm,$turnitintool,$submission) {
-    global $CFG;
+    global $CFG, $USER;
 
     if (!$course = turnitintool_get_record('course','id',$turnitintool->course)) {
         turnitintool_print_error('coursegeterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
@@ -5961,6 +5961,16 @@ function turnitintool_upload_submission($cm,$turnitintool,$submission) {
         turnitintool_print_error('submissionupdateerror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
     }
+
+    // Trigger assessable_submitted event on submission
+    $eventdata = new stdClass();
+    $eventdata->modulename   = 'turnitintool';
+    $eventdata->cmid         = $cm->id;
+    $eventdata->itemid       = $submission->id;
+    $eventdata->courseid     = $course->id;
+    $eventdata->userid       = $USER->id;
+    events_trigger('assessable_submitted', $eventdata);
+
     $tii->endSession();
 
     if (has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
