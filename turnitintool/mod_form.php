@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  *
  */
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
@@ -82,9 +82,11 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         for ($i=0;$i<=100;$i++) {
             $options[$i]=$i;
         }
-        $mform->addElement('modgrade', 'grade', get_string('overallgrade', 'turnitintool'));
-        turnitintool_modform_help_icon('grade', 'overallgrade', 'turnitintool', $mform);
-        $mform->setDefault('grade', $CFG->turnitin_default_grade);
+        if ( !is_callable(array($this,'standard_grading_coursemodule_elements')) ) {
+            $mform->addElement('modgrade', 'grade', get_string('overallgrade', 'turnitintool'));
+            turnitintool_modform_help_icon('grade', 'overallgrade', 'turnitintool', $mform);
+            $mform->setDefault('grade', $CFG->turnitin_default_grade);
+        }
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
@@ -233,12 +235,12 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         	$mform->disabledIf('erater_style','erater', 'eq', 0);
         	
         }
-        
-        if ( isset($CFG->turnitin_transmatch) && $CFG->turnitin_transmatch=='1') {
-        
-            $mform->addElement('select', 'transmatch', get_string('transmatch', 'turnitintool'), $ynoptions);
-            $mform->setDefault('transmatch', false);
 
+        if ( isset($CFG->turnitin_transmatch) && $CFG->turnitin_transmatch=='1') {
+            $mform->addElement( 'select', 'transmatch', get_string('transmatch', 'turnitintool'), $ynoptions );
+            $mform->setDefault( 'transmatch', false);
+        } else {
+            $mform->addElement( 'hidden', 'transmatch', 0 );
         }
         
         $mform->addElement('hidden','ownerid',NULL);
@@ -247,6 +249,11 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $features->groups = true;
         $features->groupings = true;
         $features->groupmembersonly = true;
+        
+        if ( is_callable(array($this,'standard_grading_coursemodule_elements')) ) {
+            $this->standard_grading_coursemodule_elements();
+        }
+        
         $this->standard_coursemodule_elements($features);
         $this->add_action_buttons();
 

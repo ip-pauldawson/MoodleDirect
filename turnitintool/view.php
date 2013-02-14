@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
 
 require_once("../../config.php");
@@ -25,11 +25,23 @@ require_once($CFG->dirroot."/lib/uploadlib.php");
 activityLog("uploadlib.php Loaded","REQUIRE_ONCE");
 
 if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
+    $PAGE->requires->js($jsurl,true);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+    $PAGE->requires->js($jsurl,true);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+    $PAGE->requires->js($jsurl,true);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
+    $PAGE->requires->js($jsurl,true);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
     $PAGE->requires->js($jsurl,true);
     $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
     $PAGE->requires->css($cssurl);
 } else {
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
     require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
 }
 activityLog("turnitintool.js Loaded","REQUIRE_JS");
@@ -64,8 +76,6 @@ if ($id) {
     }
 }
 
-turnitintool_update_choice_cookie($turnitintool);
-
 require_login($course->id);
 
 $param_jumppage=optional_param('jumppage',null,PARAM_CLEAN);
@@ -92,6 +102,7 @@ $param_export_data=optional_param('export_data',null,PARAM_CLEAN);
 $param_objectid=optional_param('objectid',null,PARAM_CLEAN);
 $param_partid=optional_param('partid',null,PARAM_CLEAN);
 $param_utp=optional_param('utp',null,PARAM_CLEAN);
+$param_enrollstudent=optional_param('enrollstudent',null,PARAM_CLEAN);
 
 // Clean the post array so we can pass it into the functions below
 $post = array();
@@ -129,6 +140,10 @@ if (!is_null($param_update)) {
     turnitintool_update_all_report_scores($cm,$turnitintool,$param_update,$loaderbar);
     turnitintool_redirect($redirectlink);
     exit();
+}
+
+if (!is_null($param_enrollstudent)) {
+    turnitintool_enroll_student($cm,$turnitintool,$param_enrollstudent);
 }
 
 if (!is_null($param_enroll)) {
@@ -175,9 +190,7 @@ if (!is_null($param_do) AND $param_do=="changeowner") {
 if (!is_null($param_do) AND $turnitintool->autoupdates==1 AND $param_do=="allsubmissions" AND !is_null($param_anonid)) {
     $loaderbar = new turnitintool_loaderbarclass(3);
     turnitintool_revealuser($cm,$turnitintool,$post,$loaderbar);
-    turnitintool_update_all_report_scores($cm,$turnitintool,2,$loaderbar);
-    $_SESSION["updatedcount"]=(!isset($_SESSION["updatedcount"])) ? 1 : $_SESSION["updatedcount"]++;
-    turnitintool_redirect($CFG->wwwroot.'/mod/turnitintool/view.php?id='.$cm->id.'&do=allsubmissions');
+    turnitintool_redirect($CFG->wwwroot.'/mod/turnitintool/view.php?id='.$cm->id.'&do=allsubmissions&update=1');
     exit();
 }
 
@@ -232,18 +245,7 @@ if (!is_null($param_submitted) AND $param_do=='options') {
     $notice=turnitintool_process_options($cm,$turnitintool,$post);
 }
 
-if (!is_null($param_do) AND $turnitintool->autoupdates==1 AND ($param_do=='allsubmissions' OR $param_do=='submissions')) {
-    if ($param_do=='submissions') {
-        $getuser=$USER->id;
-    } else {
-        $getuser=NULL;
-    }
-    if (turnitintool_update_all_report_scores($cm,$turnitintool,0)) {
-        turnitintool_redirect($CFG->wwwroot.'/mod/turnitintool/view.php?id='.$cm->id.'&do='.$param_do);
-    }
-}
-
-add_to_log($course->id, "turnitintool", "view", "view.php?id=$cm->id", "$turnitintool->id");
+add_to_log($course->id, "turnitintool", "view", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
 
 /// Print the page header
 $strturnitintools = get_string("modulenameplural", "turnitintool");

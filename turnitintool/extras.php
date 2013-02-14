@@ -1,7 +1,7 @@
 <?php  // $Id: extras.php,v 1.2 2010/06/25 11:49:46 paul.dawson Exp $
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
 
     require_once('../../config.php');
@@ -22,7 +22,7 @@
         $PAGE->requires->js($jsurl,true);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
         $PAGE->requires->js($jsurl,true);
-        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/filterdelay.datatables.js');
+        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
         $PAGE->requires->js($jsurl,true);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
         $PAGE->requires->js($jsurl,true);
@@ -31,7 +31,7 @@
     } else {
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/filterdelay.datatables.js');
+        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
     }
 
@@ -258,7 +258,7 @@
                 "aaSortingFixed": [[ 0, "asc" ]],
                 "sAjaxSource": "userlinktable.php?pseudo='.$pseudo.'",
                 "oLanguage": '.turnitintool_datatables_strings().',
-                "sDom": "r<\"dt_page\"pi><\"top\"lf>t<\"bottom\"><\"dt_page\"pi>",
+                "sDom": "r<\"dt_page nav\"pi><\"top\"lf>t<\"bottom\"><\"dt_page\"pi>",
                 "bStateSave": true
             } );
             var oTable = $(".dataTable").dataTable();
@@ -385,7 +385,11 @@
                 $fs = get_file_storage();
                 $file = $fs->get_file($filedata->contextid,'mod_turnitintool','submission',$filedata->itemid,'/',$filedata->filename);
                 $filename = isset( $submission->submission_filename ) ? $submission->submission_filename : $filedata->filename;
-                send_stored_file($file, 0, 0, true, $filename );
+                try {
+                    send_stored_file($file, 0, 0, true, $filename );
+                } catch ( Exception $e ) {
+                    send_stored_file($file, 0, 0, true, array( "filename" => $filename ) );
+                }
             }
 
         } else {
@@ -487,7 +491,7 @@
                 "aaSortingFixed": [[ 0, "asc" ]],
                 "sAjaxSource": "filestable.php?module='.$modules->id.'",
                 "oLanguage": '.turnitintool_datatables_strings().',
-                "sDom": "r<\"dt_page\"pi><\"top\"lf>t<\"bottom\"><\"dt_page\"pi>",
+                "sDom": "r<\"dt_page\"pi><\"top nav\"lf>t<\"bottom\"><\"dt_page\"pi>",
                 "bStateSave": true
             } );
             var oTable = $(".dataTable").dataTable();

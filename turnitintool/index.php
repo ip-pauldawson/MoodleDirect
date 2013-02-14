@@ -1,7 +1,7 @@
 <?php // $Id: index.php,v 1.2 2010/06/25 11:49:46 paul.dawson Exp $
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
     require_once("../../config.php");
     require_once("lib.php");
@@ -12,7 +12,7 @@
         $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/styles.css');
         $PAGE->requires->css($cssurl);
     } else {
-        require_js($CFG->wwwroot.'/mod/turnitintool/turnitintool.js');
+        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
     }
 
     $id = required_param('id', PARAM_INT);   // course

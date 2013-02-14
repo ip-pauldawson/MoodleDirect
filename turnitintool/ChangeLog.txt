@@ -1,3 +1,20 @@
+2012-12-04 : Moved 'Enroll All Students' actions into ajax, enroll all students can now happen while refresh submissions is running
+2012-12-04 : Removed quote conversion functions, they were causing quote duplication in oracle DBs and are no longer
+2012-12-04 : Updated assignment setup screen to allow selection of grade category where supported
+2012-12-04 : Added support for showing descriptions in the course home page where supported
+2012-12-04 : Fixed issue where $cm->id wasn't available when logging create and update assignments actions
+2012-12-03 : Fixed issue with missing parameter in sql query
+2012-11-26 : Moved refresh submission actions into ajax calls triggered by click and unload events
+2012-11-26 : Added event trigger on user submission (thanks to Andrew Nicols)
+2012-11-26 : Added more logging and implemented course participation hooks
+2012-11-26 : Removed several database queries from inside loops to improve performance
+2012-11-26 : Refactored Submission inbox views, jQuery filtering implemented to reduce database requests
+2012-11-13 : Fixed issue where 'assignment does not belong to class' errors would loop endlessly
+2012-11-04 : Fixed issue with PLUGINFILE being output, now using 'format_module_intro' when available
+2012-11-04 : Updated create assignment to use Moodle Default timezone rather than server timezone
+2012-11-04 : Added check to make sure version check XML isn't parsed unless in admin screens (thanks to Andrew Nicols)
+2012-11-04 : Refactored Refresh Submissions API call to only update database rows where values have changed
+2012-11-04 : Replaced custom XML parser with SimpleXML to decrease memory usage when parsing API responses
 2012-09-24 : Update icons with current Turnitin icons, update icons to allow multi version support
 2012-09-24 : Fixed bug where Erater settings would reset when editing an assignment part
 2012-09-24 : Added support for Translated Matching

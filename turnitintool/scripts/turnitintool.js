@@ -7,8 +7,11 @@ if (getcookie('turnitintool_choice_user')==null) {
     choiceUserString = getcookie('turnitintool_choice_user');
     choiceCountString = getcookie('turnitintool_choice_count');
 }
+var refreshcount = 0;
+var enrollcount = 0;
 var sid;
 var openurl;
+var newwindow;
 function updateSubForm(submissionArray,stringsArray,thisForm,genspeed,user) {
     if (user==null) {
         user="tutor";
@@ -82,16 +85,77 @@ function screenOpen(url,sidin,autoupdate,warn,options) {
     if (warn && !confirm(warn)) {
         return false;
     } else {
-        window.sid = sidin;
         openurl=url;
         newwindow=window.open('','GradeMark',options+',resizable=1');
-        newwindow.document.write('<div style="width:100%;height:100%;background: #FFF url(pix/i/progress.gif) no-repeat center center;">&nbsp;</div>');
-        newwindow.location.href=url;
+        newwindow.document.write('<frameset><frame id="newWindow" name="newWindow"></frame></frameset>');
+        newwindow.document.getElementById('newWindow').src = url;
         newwindow.focus();
-        if (autoupdate==1) {
-            unloadFunction();
+        if ( autoupdate === '1' ) {
+            var refreshSubmission = function() {
+                refreshSubmissionsAjax( sidin, 2 );
+            }
+            window.newwindow.onunload = refreshSubmission;
+            window.newwindow.onbeforeunload = refreshSubmission;
         }
     }
+}
+function refreshSubmissionsAjax( sidin, priority ) {
+    if ( refreshcount < 1 ) {
+        refreshcount++;
+        var update = undefined != priority ? '&update='+priority : '&update=1';
+        var subid = undefined != sidin ? '&subid='+sidin : '';
+        $('#inboxNotice').css( 'display', 'block' );
+        $.ajax( { 
+            'url': location.href+update+subid,
+            'success': function() {
+                refreshcount--;
+                if ( enrollcount < 1 ) window.location.reload();
+            }
+        } );
+    }
+}
+function enrolStudentsAjax( users, message ) {
+    if ( enrollcount < 1 ) {
+        enrollcount++;
+        var count = 0;
+        var messages = {};
+        messages.err_msg = '';
+        messages.message = message;
+        $('#inboxNotice').css( 'display', 'block' );
+        enrolStudent( users, count, messages, 0 );
+    }
+}
+function enrolStudent( users, count, messages, error_count ) {
+    $.ajax( {
+        'url': location.href+"&enrollstudent="+users[count],
+        'success': function( data ) {
+            count++;
+            var percent = ( count / users.length ) * 100;
+            var percentdone = Math.ceil( percent ) + "%";
+            $('#inboxNotice span span').html( messages.message + ' (' + percentdone + ')' );
+            var obj = $.parseJSON( data );
+            if ( obj.status == 'error' ) {
+                error_count++;
+                messages.err_msg += obj.msg;
+                messages.description = obj.description;
+            }
+            if ( count < users.length ) {
+                enrolStudent( users, count, messages, error_count );
+            } else if ( error_count > 0 ) {
+                output = messages.description + "\n\n" + messages.err_msg;
+                alert( output );
+                enrollcount--;
+                if ( refreshcount < 1 ) window.location.reload();
+            } else {
+                enrollcount--;
+                if ( refreshcount < 1 ) window.location.reload();
+            }
+        },
+        'error': function () {
+            enrollcount--;
+            if ( refreshcount < 1 ) window.location.reload();
+        }
+    } );
 }
 function turnitintool_countchars(thisarea,outputblock,maxchars,errormsg) {
     var outblock = document.getElementById(outputblock);
@@ -101,11 +165,7 @@ function turnitintool_countchars(thisarea,outputblock,maxchars,errormsg) {
     }
 }
 function unloadFunction() {
-    if (window.newwindow.closed) {
-        window.location.href=location.href+'&update=2';
-    } else {
-        setTimeout(unloadFunction,500);
-    }
+    window.location.href=location.href+'&update=2';
 }
 function turnitintool_jumptopage(url) {
     window.location.href=url;

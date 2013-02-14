@@ -1,5 +1,22 @@
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
+Date:       2012-Dec-04
+Release:    v2012120401
+
+- Refactored Submission inbox views, jQuery filtering implemented to reduce database requests
+- Refactored 'Enroll All Students' and 'Refresh Submissions' to use ajax
+- Optimised database queries on inbox views and refresh submissions calls
+- Added more granular logging, now logging submission add and delete, assignment add, delete and update
+- Added a submission event handler (for Moodle 2+ only)
+
+####################################################################################
+Date:       2012-Nov-04
+Release:    v2012110401
+
+- Moodle Direct now requires PHP 5.0 server environments and above
+- Added performance improvements, specifically in-box refresh on large assignments
+- Added time-zone synchronisation improvements
+
 ####################################################################################
 Date:       2012-Sept-24
 Release:    v2012092401
