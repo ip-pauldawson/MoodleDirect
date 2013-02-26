@@ -21,17 +21,15 @@
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
         $PAGE->requires->js($jsurl,true);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-        $PAGE->requires->js($jsurl,true);
+        $PAGE->requires->js($jsurl);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
-        $PAGE->requires->js($jsurl,true);
+        $PAGE->requires->js($jsurl);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
         $PAGE->requires->js($jsurl,true);
         $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
         $PAGE->requires->css($cssurl);
     } else {
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
-        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
     }
 
@@ -228,15 +226,15 @@
     }
     </style>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $.fn.dataTableExt.oStdClasses.sSortable = "header sort";
-            $.fn.dataTableExt.oStdClasses.sSortableNone = "header nosort";
-            $.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";
-            $.fn.dataTableExt.oStdClasses.sSortDesc = "header desc";
-            $.fn.dataTableExt.oStdClasses.sWrapper = "submissionTable";
-            $.fn.dataTableExt.oStdClasses.sStripeOdd = "row r0";
-            $.fn.dataTableExt.oStdClasses.sStripeEven = "row r1";
-            $("#unlink").dataTable( {
+        jQuery(document).ready(function() {
+            jQuery.fn.dataTableExt.oStdClasses.sSortable = "header sort";
+            jQuery.fn.dataTableExt.oStdClasses.sSortableNone = "header nosort";
+            jQuery.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";
+            jQuery.fn.dataTableExt.oStdClasses.sSortDesc = "header desc";
+            jQuery.fn.dataTableExt.oStdClasses.sWrapper = "submissionTable";
+            jQuery.fn.dataTableExt.oStdClasses.sStripeOdd = "row r0";
+            jQuery.fn.dataTableExt.oStdClasses.sStripeEven = "row r1";
+            jQuery("#unlink").dataTable( {
                 "bProcessing": true,
                 "bServerSide": true,
                 "aoColumns": [
@@ -261,24 +259,24 @@
                 "sDom": "r<\"dt_page nav\"pi><\"top\"lf>t<\"bottom\"><\"dt_page\"pi>",
                 "bStateSave": true
             } );
-            var oTable = $(".dataTable").dataTable();
+            var oTable = jQuery(".dataTable").dataTable();
             oTable.fnSetFilteringDelay(1000);
-            $("#unlink_filter").append( "<label id=\"check_filter\"><input class=\"linkcheck\" type=\"checkbox\" /> ' . get_string( 'unlinkedusers', 'turnitintool' ) . '</label>" );
+            jQuery("#unlink_filter").append( "<label id=\"check_filter\"><input class=\"linkcheck\" type=\"checkbox\" /> ' . get_string( 'unlinkedusers', 'turnitintool' ) . '</label>" );
             var oSettings = oTable.fnSettings();
             if ( oSettings ) {
                 var checkval = oSettings.aoPreSearchCols[1].sSearch;
                 if ( checkval == "##linked##" ) {
-                    $("#check_filter .linkcheck").attr( "checked", "checked" );
+                    jQuery("#check_filter .linkcheck").attr( "checked", "checked" );
                 }
             }
-            $("#check_filter input").change( function () {
+            jQuery("#check_filter input").change( function () {
                 var filter = "";
                 if (this.checked) {
                     filter = "##linked##";
                 }
                 oTable.fnFilter( filter, 1 );
             } );
-            $("#toggle").change( function () {
+            jQuery("#toggle").change( function () {
                 checkUncheckAll(this,\'userlinks\');
             } );
         } );
@@ -307,6 +305,15 @@
         turnitintool_box_end();
 
         echo '</div>';
+
+        if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+            // We already added the Moodle 2.0+ stuff
+        } else {
+            // These need to go to the botton here to avoid conflicts
+            require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+            require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+            require_js($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
+        }
 
         turnitintool_footer();
     } else if ( !is_null($param_do) AND ( $param_do=="commslog" OR $param_do=="activitylog" ) ) {
@@ -430,21 +437,21 @@
     }
     </style>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $.fn.dataTableExt.oStdClasses.sSortable = "header sort";
-            $.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";
-            $.fn.dataTableExt.oStdClasses.sSortDesc = "header desc";
-            $.fn.dataTableExt.oStdClasses.sWrapper = "submissionTable";
-            $.fn.dataTableExt.oStdClasses.sStripeOdd = "row r0";
-            $.fn.dataTableExt.oStdClasses.sStripeEven = "row r1";
-            $("#files").dataTable( {
+        jQuery(document).ready(function() {
+            jQuery.fn.dataTableExt.oStdClasses.sSortable = "header sort";
+            jQuery.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";
+            jQuery.fn.dataTableExt.oStdClasses.sSortDesc = "header desc";
+            jQuery.fn.dataTableExt.oStdClasses.sWrapper = "submissionTable";
+            jQuery.fn.dataTableExt.oStdClasses.sStripeOdd = "row r0";
+            jQuery.fn.dataTableExt.oStdClasses.sStripeEven = "row r1";
+            jQuery("#files").dataTable( {
                 "fnDrawCallback": function ( oSettings ) {
                     if ( oSettings.aiDisplay.length == 0 )
                     {
                         return;
                     }
 
-                    var nTrs = $("#files tbody tr");
+                    var nTrs = jQuery("#files tbody tr");
                     var iColspan = nTrs[0].getElementsByTagName("td").length;
                     var sLastGroup = "";
                     for ( var i=0 ; i<nTrs.length ; i++ )
@@ -494,17 +501,17 @@
                 "sDom": "r<\"dt_page\"pi><\"top nav\"lf>t<\"bottom\"><\"dt_page\"pi>",
                 "bStateSave": true
             } );
-            var oTable = $(".dataTable").dataTable();
+            var oTable = jQuery(".dataTable").dataTable();
             oTable.fnSetFilteringDelay(1000);
-            $("#files_filter").append( "<label id=\"check_filter\"><input class=\"deletecheck\" type=\"checkbox\" /> ' . get_string( 'deletable', 'turnitintool' ) . '</label>" );
+            jQuery("#files_filter").append( "<label id=\"check_filter\"><input class=\"deletecheck\" type=\"checkbox\" /> ' . get_string( 'deletable', 'turnitintool' ) . '</label>" );
             var oSettings = oTable.fnSettings();
             if ( oSettings ) {
                 var checkval = oSettings.aoPreSearchCols[8].sSearch;
                 if ( checkval == "##deletable##" ) {
-                    $("#check_filter .deletecheck").attr( "checked", "checked" );
+                    jQuery("#check_filter .deletecheck").attr( "checked", "checked" );
                 }
             }
-            $("#check_filter input").change( function () {
+            jQuery("#check_filter input").change( function () {
                 var filter = "";
                 if (this.checked) {
                     filter = "##deletable##";
@@ -534,6 +541,16 @@
         <tbody></tbody>
     </table></div>';
             turnitintool_box_end();
+
+            if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+                // We already added the Moodle 2.0+ stuff
+            } else {
+                // These need to go to the botton here to avoid conflicts
+                require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+                require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+                require_js($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
+            }
+
             turnitintool_footer();
 
         }
@@ -579,5 +596,6 @@
         turnitintool_footer();
 
     }
+
 
 /* ?> */

@@ -28,20 +28,17 @@ if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we usin
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
     $PAGE->requires->js($jsurl,true);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-    $PAGE->requires->js($jsurl,true);
+    $PAGE->requires->js($jsurl);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
-    $PAGE->requires->js($jsurl,true);
+    $PAGE->requires->js($jsurl);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
-    $PAGE->requires->js($jsurl,true);
+    $PAGE->requires->js($jsurl);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
     $PAGE->requires->js($jsurl,true);
     $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
     $PAGE->requires->css($cssurl);
 } else {
     require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
-    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
-    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
     require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
 }
 activityLog("turnitintool.js Loaded","REQUIRE_JS");
@@ -397,6 +394,16 @@ if ($do=='tutors') {
 
 // Finish the page
 echo '</div>';
+
+if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+    // We already added the Moodle 2.0+ stuff
+} else {
+    // These need to go to the botton here to avoid conflicts
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
+}
+
 turnitintool_footer($course);
 $module=turnitintool_get_record('modules','name','turnitintool');
 $parts=turnitintool_get_records('turnitintool_parts','turnitintoolid',$turnitintool->id);

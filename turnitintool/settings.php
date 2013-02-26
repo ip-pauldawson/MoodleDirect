@@ -23,7 +23,7 @@ if ($ADMIN->fulltree) {
         $toplinks .= '</a> | <a href="'.$CFG->wwwroot.'/mod/turnitintool/extras.php?do=files">'.get_string("files", "turnitintool");
     }
 
-    $toplinks .= '</a> - ('.get_string('moduleversion','turnitintool').': '.$module->version . $upgradeavailable . ')</div>';
+    $toplinks .= '</a> - ('.get_string('moduleversion','turnitintool').': '.( isset( $module->version ) ? $module->version : $module->versiondb ) . $upgradeavailable . ')</div>';
 
     $settings->add(new admin_setting_heading('turnitin_header', '', $toplinks));
 

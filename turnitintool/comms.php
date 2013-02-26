@@ -216,8 +216,8 @@ class turnitintool_commclass {
             
             $overlap = (string)$object->overlap;
             $transmatch = (string)$object->translated_matching->overlap;
-            $transmatch_overlap = ( !is_null( $transmatch ) ) ? $transmatch : 0;
-            if ( !is_null( $transmatch ) AND $transmatch_overlap > $overlap ) {
+            $transmatch_overlap = ( !is_null( $transmatch ) ) ? $transmatch : null;
+            if ( !is_null( $transmatch ) AND (integer)$transmatch_overlap > (integer)$overlap ) {
                 $high_overlap = $transmatch_overlap;
                 $output[$objectid]["transmatch"] = 1;
             } else {

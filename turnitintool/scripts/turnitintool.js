@@ -104,8 +104,8 @@ function refreshSubmissionsAjax( sidin, priority ) {
         refreshcount++;
         var update = undefined != priority ? '&update='+priority : '&update=1';
         var subid = undefined != sidin ? '&subid='+sidin : '';
-        $('#inboxNotice').css( 'display', 'block' );
-        $.ajax( { 
+        jQuery('#inboxNotice').css( 'display', 'block' );
+        jQuery.ajax( { 
             'url': location.href+update+subid,
             'success': function() {
                 refreshcount--;
@@ -121,19 +121,19 @@ function enrolStudentsAjax( users, message ) {
         var messages = {};
         messages.err_msg = '';
         messages.message = message;
-        $('#inboxNotice').css( 'display', 'block' );
+        jQuery('#inboxNotice').css( 'display', 'block' );
         enrolStudent( users, count, messages, 0 );
     }
 }
 function enrolStudent( users, count, messages, error_count ) {
-    $.ajax( {
+    jQuery.ajax( {
         'url': location.href+"&enrollstudent="+users[count],
         'success': function( data ) {
             count++;
             var percent = ( count / users.length ) * 100;
             var percentdone = Math.ceil( percent ) + "%";
-            $('#inboxNotice span span').html( messages.message + ' (' + percentdone + ')' );
-            var obj = $.parseJSON( data );
+            jQuery('#inboxNotice span span').html( messages.message + ' (' + percentdone + ')' );
+            var obj = jQuery.parseJSON( data );
             if ( obj.status == 'error' ) {
                 error_count++;
                 messages.err_msg += obj.msg;

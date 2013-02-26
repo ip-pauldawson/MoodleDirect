@@ -108,7 +108,7 @@ Release:	v2010040601
 - Provides seamless integration into Turnitin using Moodle workflow 
 - Uses an activity module so that we can update Turnitin independently of Moodle 
 - Uses real Turnitin accounts to allow users to log directly in to Turnitin (should they need to) 
-- Uses a �pull� approach to information and has no �call-backs� to the local VLE 
+- Uses a 'pull' approach to information and has no 'call-backs' to the local VLE 
 - Will run behind a fire wall 
 - Will handle multi-part assignments (one assignment many files) 
 - Sends GradeMark marking information to the Moodle GradeBook 
@@ -118,10 +118,8 @@ Release:	v2010040601
 - Turnitin classes can only have one owner. The class owner is set to the person that created the course in Moodle. Only the class owner will be able to see the assignments when logging in to Native Turnitin. However you can change the class owner from within Moodle if you are an instructor. 
 
 Current Limitations
-- Doesn�t manage Moodle groups 
 - Does not support Oracle as the Moodle database
 - Will not update information changed in Turnitin by users in native Turnitin 
-- Backup and restore not yet implemented
 - Will not work with assignments created under the framed-in API 
 - No support for revision assignment, master classes, GradeMark analytics, translations, Zip file upload, PeerMark, QuickSubmit
 

@@ -116,6 +116,8 @@ $output = array(
     "aaData" => array()
 );
 
+$rResult = ( !is_array( $rResult ) ) ? array() : $rResult;
+
 $i = 0;
 foreach ( $rResult as $result ) {
     // 'cs.fullname', 'tu.name', 'fl.filename', 'us.firstname', 'us.lastname', 'us.email', 'fl.timecreated'

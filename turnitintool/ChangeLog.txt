@@ -1,3 +1,10 @@
+2013-02-25 : Fixed a warning when refreshing inbox, which caused unnecessary database updates
+2013-02-25 : Fixed a Moodel 1.9 backwards compatibility issue
+2013-02-25 : Fixed some postgres related DB issues
+2013-02-18 : Fixed issue where deleted anonymous marking parts were making export links disappear
+2013-02-18 : Fixed issue where redirects were failing if the Moodle site was ran under a sub directory e.g. examplemoodle.org/moodle/
+2013-02-18 : Added the submission title back into the anonymous marking in box rows
+2013-02-18 : Fixed issue in postgres when accessing student My Submissions page
 2012-12-04 : Moved 'Enroll All Students' actions into ajax, enroll all students can now happen while refresh submissions is running
 2012-12-04 : Removed quote conversion functions, they were causing quote duplication in oracle DBs and are no longer
 2012-12-04 : Updated assignment setup screen to allow selection of grade category where supported

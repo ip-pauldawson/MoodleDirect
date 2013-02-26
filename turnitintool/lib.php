@@ -1544,7 +1544,7 @@ function turnitintool_introduction($cm,$turnitintool,$notice='') {
 
     $exportdisabled=false;
     // Get the post date for the last available part
-    if (!$part=turnitintool_get_record_select('turnitintool_parts','turnitintoolid='.$turnitintool->id,'max(dtpost) AS dtpost')) {
+    if (!$part=turnitintool_get_record_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted = 0','max(dtpost) AS dtpost')) {
         turnitintool_print_error('partgeterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
     } else if ( $part->dtpost > time() AND $turnitintool->anon > 0 ) {
@@ -1553,7 +1553,7 @@ function turnitintool_introduction($cm,$turnitintool,$notice='') {
     }
 
     // Get the start date for the first available part
-    if (!$part=turnitintool_get_record_select('turnitintool_parts','turnitintoolid='.$turnitintool->id,'min(dtstart) AS dtstart')) {
+    if (!$part=turnitintool_get_record_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted = 0','min(dtstart) AS dtstart')) {
         turnitintool_print_error('partgeterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
     }
@@ -1740,9 +1740,9 @@ function turnitintool_introduction($cm,$turnitintool,$notice='') {
             }
 
             $cells[7] = new stdClass();
-            $cells[7]->data='<a href="'.$CFG->wwwroot.'/mod/turnitintool/view.php'.
+            $cells[7]->data=(count($parts)>1) ? '<a href="'.$CFG->wwwroot.'/mod/turnitintool/view.php'.
                     '?id='.$cm->id.'&do=intro&delpart='.$part->id.'" title="'.get_string('delete','turnitintool').
-                    '"'.$warning.'><img src="pix/delete.png" class="tiiicons" alt="'.get_string('delete','turnitintool').'" /></a>';
+                    '"'.$warning.'><img src="pix/delete.png" class="tiiicons" alt="'.get_string('delete','turnitintool').'" /></a>' : '';
             $cells[7]->class="cell c9 iconcell";
 
         } else { // DO STUDENT VIEW
@@ -2371,7 +2371,7 @@ function turnitintool_view_student_submissions($cm,$turnitintool) {
             $table->valign=array('top','center','center','center','center','center','center');
             $table->wrap=array(NULL,'nowrap','nowrap','nowrap','nowrap','nowrap','nowrap');
             
-            if (!$parts=turnitintool_get_records_select('turnitintool_parts','turnitintoolid="'.$turnitintool->id.'" AND deleted = 0')) {
+            if (!$parts=turnitintool_get_records_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted = 0')) {
                 turnitintool_print_error('partgeterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
                 exit();
             }
@@ -2531,8 +2531,8 @@ function turnitintool_view_student_submissions($cm,$turnitintool) {
             
             $output .= '
 <script type="text/javascript">
-    $(document).ready(function() {
-        $("#inboxTable").dataTable( { "sPaginationType": "full_numbers", "sDom": "r<\"top navbar\"lf><\"dt_page\"pi>t<\"bottom\"><\"dt_page\"pi>", } );
+    jQuery(document).ready(function() {
+        jQuery("#inboxTable").dataTable( { "sPaginationType": "full_numbers", "sDom": "r<\"top navbar\"lf><\"dt_page\"pi>t<\"bottom\"><\"dt_page\"pi>", } );
         ' . $sessionrefresh . '
     });
 </script>';
@@ -3273,7 +3273,16 @@ function turnitintool_view_all_submissions($cm,$turnitintool,$orderby='1') {
     $scale=turnitintool_get_record('scale','id',$turnitintool->grade*-1);
     $parts=turnitintool_get_records_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted != 1');
     $concat = turnitintool_sql_concat("COALESCE(u.id,0)","'-'","COALESCE(s.id,0)","'-'","COALESCE(s.submission_objectid,0)");
-    
+
+    $usifieldid = 'NULL';
+    $usifield = '';
+    $displayusi = 'false';
+    if ( $CFG->turnitin_enablepseudo AND $CFG->turnitin_pseudolastname > 0 ) {
+        $uf = turnitintool_get_record( 'user_info_field', 'id', $CFG->turnitin_pseudolastname );
+        $usifield = $uf->name;
+        $usifieldid = $CFG->turnitin_pseudolastname;
+    }
+
     $query = "
 SELECT
     $concat AS keyid,
@@ -3322,23 +3331,13 @@ FROM {turnitintool_submissions} AS s
     LEFT JOIN
         {turnitintool_users} AS tu ON u.id = tu.userid
     LEFT JOIN
-        {user_info_data} AS ud ON u.id = ud.userid AND ud.fieldid = ?
+        {user_info_data} AS ud ON u.id = ud.userid AND ud.fieldid = $usifieldid
 WHERE
-    s.turnitintoolid = ?
+    s.turnitintoolid = ".$turnitintool->id."
 ORDER BY s.submission_grade DESC
 ";
-    
-    $usifieldid = null;
-    $usifield = '';
-    $displayusi = 'false';
-    if ( $CFG->turnitin_enablepseudo AND $CFG->turnitin_pseudolastname > 0 ) {
-        $uf = turnitintool_get_record( 'user_info_field', 'id', $CFG->turnitin_pseudolastname );
-        $usifield = $uf->name;
-        $val1 = $CFG->turnitin_pseudolastname;
-    }
 
-    $prepared = array( $usifieldid, $turnitintool->id );
-    $records = turnitintool_get_records_sql( $query, $prepared, null, null );
+    $records = turnitintool_get_records_sql( $query );
     $records = is_array( $records ) ? $records : array();
 
     $userrows = array();
@@ -3554,7 +3553,8 @@ ORDER BY s.submission_grade DESC
             } else if ( $turnitintool->anon AND !$postdatepassed ) {
                 
                 $reason=(isset($param_reason[$submission->submission_objectid])) ? $param_reason[$submission->submission_objectid] : get_string('revealreason','turnitintool');
-                $submission_link = '<span id="anonform_'.$submission->submission_objectid.
+                $submission_link = '<a href="'.$filelink.'" target="_blank" class="fileicon"'
+                        .$doscript.' title="'.$submission->submission_title.'" style="line-height: 1.8em;">'.$truncate.'</a><br /><span id="anonform_'.$submission->submission_objectid.
                         '" style="display: none;"><form action="'.$CFG->wwwroot.'/mod/turnitintool/view.php?id='.$cm->id.
                         '&do=allsubmissions" method="POST" class="" onsubmit="return anonValidate(this.reason);">&nbsp;&nbsp;&nbsp;<input id="reason" name="reason['.
                         $submission->submission_objectid.']" value="'.$reason.'" type="text" onclick="this.value=\'\';" /><input id="anonid" name="anonid" value="'.
@@ -3724,9 +3724,9 @@ $output = "
 <script type=\"text/javascript\">
     var users = ".json_encode($studentuser_array).";
     var message = '".get_string('turnitinenrollstudents','turnitintool')."';
-    $(document).ready(function() {
-        $(this).inboxTable( '".$cm->id."', ".$displayusi.", ".turnitintool_datatables_strings()." );
-        $('#loader').css( 'display', 'none' );
+    jQuery(document).ready(function() {
+        jQuery(this).inboxTable( '".$cm->id."', ".$displayusi.", ".turnitintool_datatables_strings()." );
+        jQuery('#loader').css( 'display', 'none' );
         $sessionrefresh
     });
 </script>";
@@ -3756,7 +3756,7 @@ if ( count( $table->rows ) == 1 ) { // If we only have one row it's a header and
     $output .= '<div id="loader" style="padding: 18px; margin: 0;text-align: center;vertical-align: center" class="navbar">
         <noscript>Javascript Required</noscript>
         <script>
-        $("#loader span").css( "display", "inline" );
+        jQuery("#loader span").css( "display", "inline" );
         </script><span style="display: none;background: url(pix/ajax-loader.gif) no-repeat left center;padding-left: 80px;">
         <span style="background: url(pix/ajax-loader.gif) no-repeat right center;padding-right: 80px;">'.get_string('turnitinloading','turnitintool').'</span></span></div>';
 
@@ -4276,7 +4276,7 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                 exit();
             }
             
-            if (!$ids=turnitintool_get_records_select('turnitintool_submissions','turnitintoolid='.$turnitintool->id.' AND submission_objectid IS NOT NULL','','submission_objectid,id,submission_grade,submission_score,submission_modified,submission_status,submission_attempts,userid')) {
+            if (!$ids=turnitintool_get_records_select('turnitintool_submissions','turnitintoolid='.$turnitintool->id.' AND submission_objectid IS NOT NULL','','submission_objectid,id,submission_grade,submission_score,submission_modified,submission_status,submission_attempts,userid,submission_unanon')) {
                 $ids=array();
             }
             
@@ -4324,7 +4324,7 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                         $insert->submission_filename=str_replace(" ","_",$value["title"]).'.doc';
                         $insert->submission_objectid=$key;
                         $insert->submission_score=$value["overlap"];
-                        if (is_null($insert->submission_score)) {
+                        if ($value["overlap"]==null || empty( $value["overlap"] ) ) {
                             unset($insert->submission_score);
                         }
                         $insert->submission_grade=turnitintool_processgrade($value["grademark"],$part,$owner,$post,$key,$tii,$loaderbar);
@@ -4367,7 +4367,8 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                                 OR $insert->submission_score != $ids[$key]->submission_score
                                 OR $insert->submission_modified != $ids[$key]->submission_modified
                                 OR $insert->submission_attempts != $ids[$key]->submission_attempts
-                                OR $insert->userid != $ids[$key]->userid ) {
+                                OR $insert->userid != $ids[$key]->userid
+                                OR $insert->submission_unanon != $ids[$key]->submission_unanon ) {
                             $inserts[]=$insert;
                         }
                     }
@@ -4402,7 +4403,6 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                     }
                 }
             }
-            
             if ( $api_error ) {
                 $notice=($tii->getAPIunavailable()) ? get_string('apiunavailable','turnitintool') : $tii->getRmessage();
                 $loaderbar->endloader();
@@ -5594,6 +5594,7 @@ function turnitintool_upload_submission($cm,$turnitintool,$submission) {
             $queued=0;
         }
         if (!$queued) {
+            $update->submission_score=null;
             $update->submission_status=$status;
             $update->submission_queued=$queued;
             $update->submission_modified=time();
@@ -6773,6 +6774,8 @@ function turnitintool_header($cm,$course,$url,$title='', $heading='', $navigatio
             $PAGE->set_button(update_module_button($cmid, $courseid, get_string('modulename', 'turnitintool')));
         }
 
+        $url_array = explode( '/mod/turnitintool', $url, 2 );
+        $url = '/mod/turnitintool/'.$url_array[1];
         $PAGE->set_url($url);
         $PAGE->set_title($title);
         $PAGE->set_heading($heading);
@@ -7041,14 +7044,15 @@ function turnitintool_updateavailable( $module ) {
     $tii = new turnitintool_commclass('','','','','',$loaderbar);
     $result = $tii->doRequest("GET", $basedir . "moodledirect_latest.xml", "");
     $tii->xmlToSimple( $result, false );
+    $moduleversion = ( isset( $module->version ) ) ? $module->version : $module->versiondb;
     if ( strlen( $result ) > 0 AND isset( $tii->simplexml->version ) ) {
         $version = $tii->simplexml->version;
-        if ( $version <= $module->version ) {
+        if ( $version <= $moduleversion ) {
             // No update available
             return null;
         } else {
             // Update available return URL
-            return $basedir . $tii->simplexml->filename;
+            return $tii->simplexml->filename;
         }
     }
     // Could not find the xml file can't return URL so return null
