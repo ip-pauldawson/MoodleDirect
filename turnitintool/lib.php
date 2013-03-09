@@ -6239,6 +6239,10 @@ function turnitintool_get_owner($courseid) {
 function turnitintool_url_jumpto($userid,$jumppage,$turnitintool,$utp=null,$objectid=null,$partid=null,$export_data=null) {
     global $CFG;
     $thisuser=turnitintool_get_moodleuser($userid,NULL,__FILE__,__LINE__);
+    $cm=get_coursemodule_from_instance("turnitintool", $turnitintool->id, $turnitintool->course);
+    if ( $utp > 1 AND !has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id)) ) {
+        turnitintool_print_error('permissiondeniederror','turnitintool',NULL,NULL,__FILE__,__LINE__);
+    }
     $loaderbar = NULL;
     $tii = new turnitintool_commclass(turnitintool_getUID($thisuser),$thisuser->firstname,$thisuser->lastname,$thisuser->email,$utp,$loaderbar,false);
     $tii->startSession();

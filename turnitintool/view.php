@@ -24,25 +24,6 @@ activityLog("lib.php Loaded","REQUIRE_ONCE");
 require_once($CFG->dirroot."/lib/uploadlib.php");
 activityLog("uploadlib.php Loaded","REQUIRE_ONCE");
 
-if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
-    $PAGE->requires->js($jsurl,true);
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-    $PAGE->requires->js($jsurl);
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
-    $PAGE->requires->js($jsurl);
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
-    $PAGE->requires->js($jsurl);
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
-    $PAGE->requires->js($jsurl,true);
-    $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
-    $PAGE->requires->css($cssurl);
-} else {
-    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
-    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
-}
-activityLog("turnitintool.js Loaded","REQUIRE_JS");
-
 turnitintool_process_api_error();
 
 $id = required_param('id', PARAM_INT); // Course Module ID, or
@@ -74,6 +55,25 @@ if ($id) {
 }
 
 require_login($course->id);
+
+if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
+    $PAGE->requires->js($jsurl,true);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
+    $PAGE->requires->js($jsurl);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
+    $PAGE->requires->js($jsurl);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/inboxtable.js');
+    $PAGE->requires->js($jsurl);
+    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
+    $PAGE->requires->js($jsurl,true);
+    $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
+    $PAGE->requires->css($cssurl);
+} else {
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.7.2.min.js');
+    require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
+}
+activityLog("turnitintool.js Loaded","REQUIRE_JS");
 
 $param_jumppage=optional_param('jumppage',null,PARAM_CLEAN);
 $param_userid=optional_param('userid',null,PARAM_CLEAN);

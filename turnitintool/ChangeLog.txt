@@ -1,3 +1,5 @@
+2013-03-05 : Added fix for differing profile language when loading javascript before login
+2013-03-05 : Added some user checks to the javascript jump to page
 2013-02-25 : Fixed a warning when refreshing inbox, which caused unnecessary database updates
 2013-02-25 : Fixed a Moodel 1.9 backwards compatibility issue
 2013-02-25 : Fixed some postgres related DB issues

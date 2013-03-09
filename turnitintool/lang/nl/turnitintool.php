@@ -1,6 +1,6 @@
 <?php
-// Version: 2012092401
-// Date: 2012-09-24
+// Version: 2012120401
+// Date: 2012-12-04
 // Language: nl
 
 $string['addcomment'] = 'Opmerking toevoegen';
@@ -26,7 +26,7 @@ $string['assignmentindividualise'] = 'Gedeelte opdracht {$a} aan het verwerken';
 $string['assignmentprocess'] = 'Gedeelte opdracht {$a} aan het initialiseren';
 $string['assignmentupdate'] = 'Gedeelte opdracht {$a} aan het updaten';
 $string['autorefreshgrades'] = 'Automatisch cijfers/scores verversen';
-$string['autorefreshgrades_help'] = 'Standaard na elke call tot Turnitin zal de Moodle integratie plug-in proberen automatisch wijzigingen gemaakt terwijl in Turnitin uit te trekken. U kunt deze optie gebruiken om deze functie uit te schakelen, maar om de synchronisatie tussen beide systemen te behouden, moet u vaak handmatig cijfers en oorspronkelijkheidsscores vernieuwen vanuit Moodle.';
+$string['autorefreshgrades_help'] = 'Standaard zal na elke oproep tot Turnitin de Moodle integratie-plugin proberen automatisch wijzigingen die gemaakt zijn in Turnitin door te voeren. U kunt deze optie gebruiken om deze functie uit te schakelen, maar om de synchronisatie tussen beide systemen te behouden, moet u vaak handmatig cijfers en oorspronkelijkheidsscores vernieuwen vanuit Moodle.';
 $string['autosubmit'] = 'Automatisch indienen';
 $string['autosubmit_help'] = 'Om gebruikersindieningen automatisch in te dienen bij Turnitin tijdens het uploaden stel deze optie in op &#39;Indienen bij Turnitin onmiddellijk bij Uploaden&#39;. Als alternatief kunt u de optie instellen zodat vereist wordt dat de indiening in Moodle wordt opgeslagen en handmatig wordt geüpload naar Turnitin door het selecteren van de optie &#39;Kijk Upload na voor het Indienen bij Turnitin&#39;.';
 $string['autosubmitoff'] = 'Bekijk upload voor het indienen bij Turnitin';

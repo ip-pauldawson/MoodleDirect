@@ -1,6 +1,6 @@
 <?php
-// Version: 2012092401
-// Date: 2012-09-24
+// Version: 2012120401
+// Date: 2012-12-04
 // Language: es
 
 $string['addcomment'] = 'Agregar Comentario';
