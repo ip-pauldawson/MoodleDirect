@@ -3321,17 +3321,17 @@ SELECT
     s.submission_unanon AS submission_unanon,
     s.submission_unanonreason AS submission_unanonreason,
     s.submission_transmatch AS submission_transmatch
-FROM {turnitintool_submissions} AS s
+FROM {turnitintool_submissions} s
     LEFT JOIN
-        {user} AS u ON u.id = s.userid
+        {user} u ON u.id = s.userid
     LEFT JOIN
-        {turnitintool_parts} AS p ON p.id = s.submission_part
+        {turnitintool_parts} p ON p.id = s.submission_part
     LEFT JOIN
-        {turnitintool} AS t ON t.id = p.turnitintoolid
+        {turnitintool} t ON t.id = p.turnitintoolid
     LEFT JOIN
-        {turnitintool_users} AS tu ON u.id = tu.userid
+        {turnitintool_users} tu ON u.id = tu.userid
     LEFT JOIN
-        {user_info_data} AS ud ON u.id = ud.userid AND ud.fieldid = $usifieldid
+        {user_info_data} ud ON u.id = ud.userid AND ud.fieldid = $usifieldid
 WHERE
     s.turnitintoolid = ".$turnitintool->id."
 ORDER BY s.submission_grade DESC
