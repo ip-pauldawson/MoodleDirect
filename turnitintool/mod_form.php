@@ -13,7 +13,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
 
         global $CFG, $DB, $COURSE, $USER;
         $mform    =& $this->_form;
-        
+
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('turnitintoolname', 'turnitintool'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
@@ -27,7 +27,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $input->field=get_string('turnitintoolname','turnitintool');
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'client');
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'server');
-        
+
         if (is_callable(array($this,'add_intro_editor'))) {
             $this->add_intro_editor(true, get_string('turnitintoolintro', 'turnitintool'));
         } else {
@@ -40,27 +40,27 @@ class mod_turnitintool_mod_form extends moodleform_mod {
             $mform->addRule('intro', get_string('maxlength','turnitintool',$input), 'maxlength', 1000, 'client');
             $mform->addRule('intro', get_string('maxlength','turnitintool',$input), 'maxlength', 1000, 'server');
         }
-        
+
         $typeoptions = turnitintool_filetype_array();
 
         $mform->addElement('select', 'type', get_string('type', 'turnitintool'), $typeoptions);
         turnitintool_modform_help_icon('type', 'types', 'turnitintool', $mform);
         $mform->addRule('type', get_string('required'), 'required', null, 'client');
         $mform->setDefault('type', $CFG->turnitin_default_type);
-        
+
         $options = array();
         for($i = 1; $i <= 5; $i++) {
             $options[$i] = $i;
         }
-        
+
         $mform->addElement('select', 'numparts', get_string('numberofparts', 'turnitintool'), $options);
         turnitintool_modform_help_icon('numparts', 'numberofparts', 'turnitintool', $mform);
         $mform->setDefault('numparts', $CFG->turnitin_default_numparts);
-        
+
         $suboptions = array( 0 => get_string('namedparts','turnitintool'), 1 => get_string('portfolio','turnitintool'));
-        
+
         $mform->addElement('hidden','portfolio',0);
-        
+
         $maxtii=20971520;
         if ($CFG->maxbytes>$maxtii) {
             $maxbytes1=$maxtii;
@@ -72,12 +72,12 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         } else {
             $maxbytes2=$COURSE->maxbytes;
         }
-        
+
         $options=get_max_upload_sizes($maxbytes1, $maxbytes2);
-        
+
         $mform->addElement('select', 'maxfilesize', get_string('maxfilesize', 'turnitintool'), $options);
         turnitintool_modform_help_icon('maxfilesize', 'maxfilesize', 'turnitintool', $mform);
-        
+
         unset($options);
         for ($i=0;$i<=100;$i++) {
             $options[$i]=$i;
@@ -93,7 +93,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addElement('hidden','defaultdtstart',time());
         $mform->addElement('hidden','defaultdtdue',strtotime('+7 days'));
         $mform->addElement('hidden','defaultdtpost',strtotime('+7 days'));
-        
+
         if (isset($this->_cm->id)) {
             $turnitintool=turnitintool_get_record("turnitintool", "id", $this->_cm->instance);
             $updating=true;
@@ -103,7 +103,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
             $numsubs=0;
         }
 
-        
+
         if ($updating AND $CFG->turnitin_useanon AND isset($turnitintool->anon) AND $numsubs>0) {
             $staticout=(isset($turnitintool->anon) AND $turnitintool->anon) ? get_string('yes', 'turnitintool') : get_string('no', 'turnitintool');
             $mform->addElement('static', 'static', get_string('turnitinanon', 'turnitintool'), $staticout);
@@ -117,31 +117,31 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         } else {
             $mform->addElement('hidden', 'anon', 0);
         }
-        
+
         $mform->addElement('select', 'studentreports', get_string('studentreports', 'turnitintool'), $ynoptions);
         turnitintool_modform_help_icon('studentreports', 'studentreports', 'turnitintool', $mform);
         $mform->setDefault('studentreports', $CFG->turnitin_default_studentreports);
-        
+
         $mform->addElement('header', 'general', get_string('advancedoptions', 'turnitintool'));
         $mform->addElement('select', 'allowlate', get_string('allowlate', 'turnitintool'), $ynoptions);
         $mform->setDefault('allowlate', $CFG->turnitin_default_allowlate);
-        
+
         $genoptions = array( 0 => get_string('genimmediately1','turnitintool'), 1 => get_string('genimmediately2','turnitintool'), 2 => get_string('genduedate','turnitintool'));
         $mform->addElement('select', 'reportgenspeed', get_string('reportgenspeed', 'turnitintool'), $genoptions);
         $mform->setDefault('reportgenspeed', $CFG->turnitin_default_reportgenspeed);
-        
+
         $suboptions = array( 0 => get_string('norepository','turnitintool'), 1 => get_string('standardrepository','turnitintool'));
 
         if ($CFG->turnitin_userepository=="1") {
             $suboptions[2] = get_string('institutionalrepository','turnitintool');
         }
-		
+
         $mform->addElement('select', 'submitpapersto', get_string('submitpapersto', 'turnitintool'), $suboptions);
         $mform->setDefault('submitpapersto', $CFG->turnitin_default_submitpapersto);
-        
+
         $mform->addElement('select', 'spapercheck', get_string('spapercheck', 'turnitintool'), $ynoptions);
         $mform->setDefault('spapercheck', $CFG->turnitin_default_spapercheck);
-        
+
         $mform->addElement('select', 'internetcheck', get_string('internetcheck', 'turnitintool'), $ynoptions);
         $mform->setDefault('internetcheck', $CFG->turnitin_default_internetcheck);
 
@@ -189,51 +189,51 @@ class mod_turnitintool_mod_form extends moodleform_mod {
             $mform->addElement('select', 'excludetype', '', $typeoptions);
             $mform->setDefault('excludetype', 1);
         }
-        
+
         if ( isset($CFG->turnitin_useerater) && $CFG->turnitin_useerater=='1') {
-        	$handbook_options = array(
-        								1 => get_string('erater_handbook_advanced','turnitintool'),
-        								2 => get_string('erater_handbook_highschool','turnitintool'),
-        								3 => get_string('erater_handbook_middleschool','turnitintool'),
-        								4 => get_string('erater_handbook_elementary','turnitintool'),
-        								5 => get_string('erater_handbook_learners','turnitintool'),
-        							);
-        	$dictionary_options = array(
-						        		'en_US' => get_string('erater_dictionary_enus','turnitintool'),
-						        		'en_GB' => get_string('erater_dictionary_engb','turnitintool'),
-						        		'en' 	=> get_string('erater_dictionary_en','turnitintool')
-						        	);
-        	$mform->addElement('select', 'erater', get_string('erater', 'turnitintool'), $ynoptions);
-        	$mform->setDefault('erater', 0);
-        	
-        	$mform->addElement('select', 'erater_handbook', get_string('erater_handbook', 'turnitintool'), $handbook_options);
-        	$mform->setDefault('erater_handbook', 2);
-        	$mform->disabledIf('erater_handbook','erater', 'eq', 0);
-        	
-        	$mform->addElement('select', 'erater_dictionary', get_string('erater_dictionary', 'turnitintool'), $dictionary_options);
-        	$mform->setDefault('erater_dictionary', 'en_US');
-        	$mform->disabledIf('erater_dictionary','erater', 'eq', 0);
-        	
-        	$mform->addElement('checkbox', 'erater_spelling', get_string('erater_categories', 'turnitintool'), " ".get_string('erater_spelling', 'turnitintool'));
-        	$mform->setDefault('erater_spelling', false);
-        	$mform->disabledIf('erater_spelling','erater', 'eq', 0);
-        	
-        	$mform->addElement('checkbox', 'erater_grammar', '', " ".get_string('erater_grammar', 'turnitintool'));
-        	$mform->setDefault('erater_grammar', false);
-        	$mform->disabledIf('erater_grammar','erater', 'eq', 0);
-        	
-        	$mform->addElement('checkbox', 'erater_usage', '', " ".get_string('erater_usage', 'turnitintool'));
-        	$mform->setDefault('erater_usage', false);
-        	$mform->disabledIf('erater_usage','erater', 'eq', 0);
-        	
-        	$mform->addElement('checkbox', 'erater_mechanics', '', " ".get_string('erater_mechanics', 'turnitintool'));
-        	$mform->setDefault('erater_mechanics', false);
-        	$mform->disabledIf('erater_mechanics','erater', 'eq', 0);
-        	
-        	$mform->addElement('checkbox', 'erater_style', '', " ".get_string('erater_style', 'turnitintool'));
-        	$mform->setDefault('erater_style', false);
-        	$mform->disabledIf('erater_style','erater', 'eq', 0);
-        	
+            $handbook_options = array(
+                                        1 => get_string('erater_handbook_advanced','turnitintool'),
+                                        2 => get_string('erater_handbook_highschool','turnitintool'),
+                                        3 => get_string('erater_handbook_middleschool','turnitintool'),
+                                        4 => get_string('erater_handbook_elementary','turnitintool'),
+                                        5 => get_string('erater_handbook_learners','turnitintool'),
+                                    );
+            $dictionary_options = array(
+                                        'en_US' => get_string('erater_dictionary_enus','turnitintool'),
+                                        'en_GB' => get_string('erater_dictionary_engb','turnitintool'),
+                                        'en'     => get_string('erater_dictionary_en','turnitintool')
+                                    );
+            $mform->addElement('select', 'erater', get_string('erater', 'turnitintool'), $ynoptions);
+            $mform->setDefault('erater', 0);
+
+            $mform->addElement('select', 'erater_handbook', get_string('erater_handbook', 'turnitintool'), $handbook_options);
+            $mform->setDefault('erater_handbook', 2);
+            $mform->disabledIf('erater_handbook','erater', 'eq', 0);
+
+            $mform->addElement('select', 'erater_dictionary', get_string('erater_dictionary', 'turnitintool'), $dictionary_options);
+            $mform->setDefault('erater_dictionary', 'en_US');
+            $mform->disabledIf('erater_dictionary','erater', 'eq', 0);
+
+            $mform->addElement('checkbox', 'erater_spelling', get_string('erater_categories', 'turnitintool'), " ".get_string('erater_spelling', 'turnitintool'));
+            $mform->setDefault('erater_spelling', false);
+            $mform->disabledIf('erater_spelling','erater', 'eq', 0);
+
+            $mform->addElement('checkbox', 'erater_grammar', '', " ".get_string('erater_grammar', 'turnitintool'));
+            $mform->setDefault('erater_grammar', false);
+            $mform->disabledIf('erater_grammar','erater', 'eq', 0);
+
+            $mform->addElement('checkbox', 'erater_usage', '', " ".get_string('erater_usage', 'turnitintool'));
+            $mform->setDefault('erater_usage', false);
+            $mform->disabledIf('erater_usage','erater', 'eq', 0);
+
+            $mform->addElement('checkbox', 'erater_mechanics', '', " ".get_string('erater_mechanics', 'turnitintool'));
+            $mform->setDefault('erater_mechanics', false);
+            $mform->disabledIf('erater_mechanics','erater', 'eq', 0);
+
+            $mform->addElement('checkbox', 'erater_style', '', " ".get_string('erater_style', 'turnitintool'));
+            $mform->setDefault('erater_style', false);
+            $mform->disabledIf('erater_style','erater', 'eq', 0);
+
         }
 
         if ( isset($CFG->turnitin_transmatch) && $CFG->turnitin_transmatch=='1') {
@@ -242,22 +242,20 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         } else {
             $mform->addElement( 'hidden', 'transmatch', 0 );
         }
-        
+
         $mform->addElement('hidden','ownerid',NULL);
 
         $features = new stdClass;
         $features->groups = true;
         $features->groupings = true;
         $features->groupmembersonly = true;
-        
+
         if ( is_callable(array($this,'standard_grading_coursemodule_elements')) ) {
             $this->standard_grading_coursemodule_elements();
         }
-        
+
         $this->standard_coursemodule_elements($features);
         $this->add_action_buttons();
 
     }
 }
-
-/* ?> */
