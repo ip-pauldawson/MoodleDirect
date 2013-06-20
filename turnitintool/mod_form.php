@@ -60,6 +60,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $suboptions = array( 0 => get_string('namedparts','turnitintool'), 1 => get_string('portfolio','turnitintool'));
 
         $mform->addElement('hidden','portfolio',0);
+        $mform->setType('portfolio', PARAM_INT);
 
         $maxtii=20971520;
         if ($CFG->maxbytes>$maxtii) {
@@ -91,8 +92,11 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
         $mform->addElement('hidden','defaultdtstart',time());
+        $mform->setType('defaultdtstart', PARAM_INT);
         $mform->addElement('hidden','defaultdtdue',strtotime('+7 days'));
+        $mform->setType('defaultdtdue', PARAM_INT);
         $mform->addElement('hidden','defaultdtpost',strtotime('+7 days'));
+        $mform->setType('defaultdtpost', PARAM_INT);
 
         if (isset($this->_cm->id)) {
             $turnitintool=turnitintool_get_record("turnitintool", "id", $this->_cm->instance);
@@ -166,6 +170,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
                     ? get_string('nolimit', 'turnitintool') : $turnitintool->excludevalue.' '.$staticout;
             $mform->addElement('static', 'static', get_string('excludevalue', 'turnitintool'), $staticval);
             $mform->addElement('hidden', 'excludevalue', $turnitintool->excludevalue);
+            $mform->setType('excludevalue', PARAM_INT);
             $mform->addElement('hidden', 'excludetype', $turnitintool->excludetype);
 
         } else {
@@ -188,6 +193,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
 
             $mform->addElement('select', 'excludetype', '', $typeoptions);
             $mform->setDefault('excludetype', 1);
+            $mform->setType('excludevalue', PARAM_INT);
         }
 
         if ( isset($CFG->turnitin_useerater) && $CFG->turnitin_useerater=='1') {
@@ -238,12 +244,15 @@ class mod_turnitintool_mod_form extends moodleform_mod {
 
         if ( isset($CFG->turnitin_transmatch) && $CFG->turnitin_transmatch=='1') {
             $mform->addElement( 'select', 'transmatch', get_string('transmatch', 'turnitintool'), $ynoptions );
+            $mform->setType('transmatch', PARAM_BOOL);
             $mform->setDefault( 'transmatch', false);
         } else {
             $mform->addElement( 'hidden', 'transmatch', 0 );
+            $mform->setType('transmatch', PARAM_BOOL);
         }
 
         $mform->addElement('hidden','ownerid',NULL);
+        $mform->setType('ownerid', PARAM_INT);
 
         $features = new stdClass;
         $features->groups = true;
