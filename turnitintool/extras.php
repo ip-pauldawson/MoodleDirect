@@ -189,7 +189,7 @@
         echo '<b>'.get_string('unlinkrelinkusers','turnitintool').'</b><br /><br />';
 
         // 'tu.userid', 'tu.turnitin_uid', 'tu.turnitin_utp', 'mu.firstname', 'mu.lastname', 'mu.email', 'tu.turnitin_uid'
-        
+
         if ( isset($CFG->turnitin_enablepseudo) AND $CFG->turnitin_enablepseudo == 1 ) {
             $pseudo = 1;
             $pseudo_visible = 'true';
@@ -197,7 +197,7 @@
             $pseudo = 0;
             $pseudo_visible = 'false';
         }
-        
+
         echo '
     <style>
     #unlink .header.sort div {
