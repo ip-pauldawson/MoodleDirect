@@ -587,9 +587,9 @@ function turnitintool_update_instance($turnitintool) {
             AND '.$DB->sql_compare_text('instance').' = :id
             AND '.$DB->sql_compare_text('name').' = :name';
         } else {
-            $deletewhere = 'modulename = :modulename
-            AND instance = :id
-            AND name = :name';
+            $deletewhere = 'modulename = \'turnitintool\'
+            AND instance = \''.$turnitintool->id.'\'
+            AND name = \''.$name.'\'';
         }
         turnitintool_delete_records_select('event', $deletewhere, array('modulename' => 'turnitintool', 'id' => $turnitintool->id, 'name' => $name));
 
@@ -4539,7 +4539,7 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                         $insert->submission_part=$part->id;
                         $insert->submission_title=$value["title"];
                         $insert->submission_type=1;
-                        $insert->submission_filename=str_replace(" ","_",$value["title"]).'.doc';
+                        $insert->submission_filename=str_replace(array("&#39;","&rsquo;","&lsquo;","'"," "),"_",$value["title"]).'.doc';
                         $insert->submission_objectid=$key;
                         $insert->submission_score=$value["overlap"];
                         if ( $value["overlap"] !== '0' && empty( $value["overlap"] ) ) {
@@ -4637,7 +4637,6 @@ function turnitintool_update_all_report_scores($cm,$turnitintool,$trigger,$loade
                     $param_ajax=0;
                     exit();
                 }
-                echo "<script>alert('James is fat 3')</script>";
                 return false;
             }
 
@@ -5363,8 +5362,8 @@ function turnitintool_checkforsubmission($cm,$turnitintool,$partid,$userid) {
             $subinsert['userid']=$userid;
             $subinsert['turnitintoolid']=$turnitintool->id;
             $subinsert['submission_part']=$part->id;
-            $subinsert['submission_title']=$sub_object['title'];
             $subinsert['submission_type']=1;
+            $subinsert['submission_title']=$sub_object['title'];
             $subinsert['submission_filename']=str_replace(" ","_",$sub_object['title']).'.doc';
             $subinsert['submission_objectid']=$key;
             $subinsert['submission_score']=$sub_object['overlap'];
@@ -5434,14 +5433,6 @@ function turnitintool_dofileupload($cm,$turnitintool,$userid,$post) {
 
     if (empty($_FILES['submissionfile']['name'])) {
         $notice["error"].=get_string('submissionfileerror','turnitintool').'<br />';
-        $error=true;
-    }
-
-    $allowed=array('doc','docx','rtf','txt','pdf','htm','html','odt','hwp','ps','wpd', 'ppt', 'pptx', 'ppsx', 'pps');
-    $explode = explode('.',$_FILES['submissionfile']['name']);
-    $pop = array_pop($explode);
-    if (!in_array($pop,$allowed)) {
-        $notice["error"].=get_string('submissionfiletypeerror','turnitintool',join(', ',$allowed)).'<br />';
         $error=true;
     }
 
@@ -5602,7 +5593,7 @@ function turnitintool_dotextsubmission($cm,$turnitintool,$userid,$post) {
 
     $checksubmission=turnitintool_checkforsubmission($cm,$turnitintool,$post['submissionpart'],$userid);
 
-    if (!$error AND isset($checksubmission->id) AND $turnitintool->reportgenspeed>0) {
+    if (!$error AND isset($checksubmission->id) AND $turnitintool->reportgenspeed==0) {
         // Kill the script here as we do not want double errors
         // We only get here if there are no other errors
         turnitintool_print_error('alreadysubmitted','turnitintool',NULL,NULL,__FILE__,__LINE__);
@@ -5613,8 +5604,6 @@ function turnitintool_dotextsubmission($cm,$turnitintool,$userid,$post) {
     if (isset($checksubmission->id) AND $turnitintool->reportgenspeed>0) {
         $resubmission=true;
     }
-
-    echo "test";
 
     if ($resubmission AND $checksubmission->dtdue<time()) {
         turnitintool_print_error('alreadysubmitted','turnitintool',NULL,NULL,__FILE__,__LINE__);
@@ -6716,7 +6705,8 @@ function turnitintool_update_record($table,$dataobject) {
     if (is_callable(array($DB,'update_record'))) {
         return $DB->update_record($table,$dataobject);
     } else {
-        return update_record($table,$dataobject);
+        $cleanobj = turnitintool_cleanobject($dataobject);
+        return update_record($table,$cleanobj);
     }
 }
 /**
@@ -6735,8 +6725,26 @@ function turnitintool_insert_record($table,$dataobject,$returnid=true,$primaryke
     if (is_callable(array($DB,'insert_record'))) {
         return $DB->insert_record($table,$dataobject,$returnid,$primarykey);
     } else {
-        return insert_record($table,$dataobject,$returnid,$primarykey);
+        $cleanobj = turnitintool_cleanobject($dataobject);
+        return insert_record($table,$cleanobj,$returnid,$primarykey);
     }
+}
+/**
+ * Removes single quotes from strings being written to the database
+ * Designed to remove database issues in Moodle 1.9 builds
+ *
+ * @param object $dataobject The object that we want to clean
+ * @return object The cleaned object
+ */
+function turnitintool_cleanobject( $dataobject ) {
+    foreach ($dataobject as &$value) {
+        // Prevents issue with apostrophes being escaped in Moodle 1.9
+        if(substr($value, -1) == "'"){
+            $value = substr($value, 0, -2);
+        }
+        $value = str_replace(array("‘","’","‛","'","&#39;","&lsquo;","&rsquo;","`"), "", $value);
+    }
+    return $dataobject;
 }
 /**
  * Abstracted version of delete_records_select() to work with Moodle 1.8 through 2.0

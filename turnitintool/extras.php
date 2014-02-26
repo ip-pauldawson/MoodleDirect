@@ -112,7 +112,7 @@
                 foreach ($data as $datarow) {
                     $datarow=get_object_vars($datarow);
                     foreach ($datarow as $datacell) {
-                        echo ' '.htmlspecialchars(str_pad(substr($datacell,0,$columnwidth),$columnwidth," ",1)).'|';
+                        echo ' '.htmlspecialchars(str_pad(substr($datacell,0,$columnwidth),$columnwidth," ",1),ENT_NOQUOTES,'UTF-8').'|';
                     }
                     if ($table=='turnitintool_users' AND $moodleuser=turnitintool_get_record('user','id',$datarow['userid'])) {
                         echo ' '.str_pad(substr($moodleuser->firstname.' '.$moodleuser->lastname,0,$columnwidth),$columnwidth," ",1).'|';
