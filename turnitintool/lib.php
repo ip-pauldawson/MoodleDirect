@@ -1189,7 +1189,7 @@ function turnitintool_draw_menu($cm,$do) {
  * @return array A notice array contains error details for display on page load in the case of an error nothing returned if no errors occur
  */
 function turnitintool_update_partnames($cm,$turnitintool,$post) {
-    global $CFG,$USER;
+    global $CFG,$USER,$DB;
     if (has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         $notice['message']='';
         $error=false;
@@ -1343,8 +1343,7 @@ function turnitintool_update_partnames($cm,$turnitintool,$post) {
             if (!$dbpart=turnitintool_update_record('turnitintool_parts',$part,false)) {
                 turnitintool_print_error('partdberror','turnitintool',NULL,NULL,__FILE__,__LINE__);
             }
-
-            if ($events = turnitintool_get_record_select('event', "modulename='turnitintool' AND instance='".$turnitintool->id."' AND name='".$currentevent."'")) {
+            if ($events = $DB->get_record_select('event', "modulename='turnitintool' AND instance=? AND name=?", array($turnitintool->id, $currentevent))) {
                 $event->id = $events->id;
                 update_event($event);
             }
