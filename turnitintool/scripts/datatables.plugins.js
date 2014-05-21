@@ -79,12 +79,15 @@ tiiQ.fn.dataTableExt.aTypes.unshift(
 );
 tiiQ.extend( tiiQ.fn.dataTableExt.oSort, {
    "date-uk-pre": function ( a ) {
-        var ukDatea = a.split('/');
+        var ukDateTimea = a.split(',');
+        var ukDatea = ukDateTimea[0].split('/');
+        var ukTimea = ukDateTimea[1].split(':');
+        ukTimea[0] = ukTimea[0].trim();
         ukDatea[2] = ukDatea[2].substring(0,2);
         if(ukDatea[0].length == 1){
             ukDatea[0] = '0'+ukDatea[0];
         }
-        return (ukDatea[2] + ukDatea[1] + ukDatea[0]) * 1;
+        return (ukDatea[2] + ukDatea[1] + ukDatea[0] + ukTimea[0] + ukTimea[1]) * 1;
     },
 
     "date-uk-asc": function ( a, b ) {

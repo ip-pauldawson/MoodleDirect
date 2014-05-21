@@ -13,7 +13,6 @@ jQuery.noConflict();
 
         // Decide table ordering based on langconfig setting
         if (date_format ==  "%d/%m/%y, %H:%M") {
-            console.log(date_format);
             sortSubmittedDate = "date-uk";
         }else{
             sortSubmittedDate = "date"; //US date is default
