@@ -3991,12 +3991,18 @@ function turnitintool_reloadinbox_row( $cm, $turnitintool, $objectid ) {
         // Get logged in user
         $user = turnitintool_get_moodleuser( $USER->id );
 
+        // Use course owner when updating request
+        if (!$owner = turnitintool_get_owner($turnitintool->course)) {
+            turnitintool_print_error('tutorgeterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
+            exit();
+        }
+
         // Instantiate the TII Comms Class
         $loaderbar = null;
-        $tii=new turnitintool_commclass(turnitintool_getUID($user),$user->firstname,$user->lastname,$user->email,2,$loaderbar);
+        $tii=new turnitintool_commclass(turnitintool_getUID($owner),$owner->firstname,$owner->lastname,$owner->email,2,$loaderbar);
 
         // Set the user up with a TII account if they do not already have one
-        turnitintool_usersetup($user,get_string('userprocess','turnitintool'),$tii,$loaderbar);
+        turnitintool_usersetup($owner,get_string('userprocess','turnitintool'),$tii,$loaderbar);
         if (isset( $tii->result) AND $tii->getRerror() ) {
             header('HTTP/1.0 400 Bad Request');
             if ($tii->getAPIunavailable()) {
