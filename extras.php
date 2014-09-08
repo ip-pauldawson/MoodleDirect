@@ -18,8 +18,12 @@
     }
 
     if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
-        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
-        $PAGE->requires->js($jsurl,true);
+        if (!is_callable(array('page_requirements_manager', 'jquery'))) {
+            $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
+            $PAGE->requires->js($jsurl);
+        } else {
+            $PAGE->requires->jquery();
+        }
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
         $PAGE->requires->js($jsurl);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');

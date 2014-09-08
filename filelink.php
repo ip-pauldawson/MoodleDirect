@@ -48,7 +48,7 @@ if (!is_null($param_sub)) {
         exit();
     }
 
-    if (!has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id)) AND $USER->id!=$submission->userid) {
+    if (!has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id)) AND $USER->id!=$submission->userid) {
         // Check to see if the user logged in is the user that submitted or is a grader (tutor)
         turnitintool_print_error('permissiondeniederror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
@@ -60,7 +60,7 @@ if (!is_null($param_sub)) {
 
 } if (!is_null($param_part)) {
 
-    if (!has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if (!has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id))) {
         turnitintool_print_error('permissiondeniederror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
     }

@@ -23,15 +23,17 @@
 
     require_login($course->id);
 
-    add_to_log($course->id, "turnitintool", "view all", "index.php?id=$course->id", "");
+    turnitintool_add_to_log($course->id, "list turnitintool", "index.php?id=$course->id", "User viewed the Turnitin assignment list for course $course->id", 0);
 
 
 /// Get all required stringsnewmodule
 
     $strturnitintools = get_string("modulenameplural", "turnitintool");
     $strturnitintool  = get_string("modulename", "turnitintool");
-
-    if (!is_callable('build_navigation')) {
+    if(is_object($PAGE) && @is_callable(array($PAGE->navbar, 'add'))) {
+        $navigation = '';
+    }
+    elseif (!is_callable('build_navigation')) {
         $navigation = array(
         array('title' => $course->shortname, 'url' => $CFG->wwwroot."/course/view.php?id=$course->id", 'type' => 'course'),
         array('title' => $strturnitintools, 'url' => '', 'type' => 'activity')
@@ -136,7 +138,7 @@
         $part=turnitintool_get_record_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted=0',NULL,'MIN(dtstart) AS dtstart');
         $dtstart = '<span'.$dimmed.'>'.userdate($part->dtstart,get_string('strftimedatetimeshort','langconfig')).'</span>';
         $partcount=turnitintool_count_records_select('turnitintool_parts','turnitintoolid='.$turnitintool->id.' AND deleted=0');
-		if (has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $turnitintool->coursemodule))) {
+		if (has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $turnitintool->coursemodule))) {
 	        $submissioncount='<a'.$dimmed.' href="view.php?id='.$turnitintool->coursemodule.'&do=allsubmissions">'.turnitintool_count_records('turnitintool_submissions','turnitintoolid',$turnitintool->id).'</a>';
 		} else {
 			$submissioncount='<a'.$dimmed.' href="view.php?id='.$turnitintool->coursemodule.'&do=submissions">'.turnitintool_count_records_select('turnitintool_submissions','turnitintoolid='.$turnitintool->id.' AND userid='.$USER->id).'</a>';

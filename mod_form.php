@@ -42,7 +42,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
 
         $typeoptions = turnitintool_filetype_array();
 
-        $mform->addElement('select', 'type', get_string('type', 'turnitintool'), $typeoptions);
+        $mform->addElement('select', 'type', get_string('type', 'turnitintool'), array( '1' => $typeoptions[1], '2' => $typeoptions[2], '' => $typeoptions[3], '0' => $typeoptions[0] ));
         turnitintool_modform_help_icon('type', 'types', 'turnitintool', $mform);
         $mform->addRule('type', get_string('required'), 'required', null, 'client');
         $mform->setDefault('type', $CFG->turnitin_default_type);

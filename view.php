@@ -58,8 +58,12 @@ if ($id) {
 require_login($course->id);
 
 if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
-    $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
-    $PAGE->requires->js($jsurl,true);
+    if (!is_callable(array('page_requirements_manager', 'jquery'))) {
+        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
+        $PAGE->requires->js($jsurl, true);
+    } else {
+        $PAGE->requires->jquery();
+    }
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
     $PAGE->requires->js($jsurl);
     $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
@@ -249,13 +253,15 @@ if (!is_null($param_submitted) AND $param_do=='options') {
     $notice=turnitintool_process_options($cm,$turnitintool,$post);
 }
 
-add_to_log($course->id, "turnitintool", "view", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
+turnitintool_add_to_log($course->id, "view turnitintool", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
 
 /// Print the page header
 $strturnitintools = get_string("modulenameplural", "turnitintool");
 $strturnitintool  = get_string("modulename", "turnitintool");
 
-if (!is_callable('build_navigation')) {
+if(is_object($PAGE) && @is_callable(array($PAGE->navbar, 'add'))) {
+    $navigation = '';
+} elseif (!is_callable('build_navigation')) {
     $navigation = array(
             array('title' => $course->shortname, 'url' => $CFG->wwwroot."/course/view.php?id=$course->id", 'type' => 'course'),
             array('title' => $strturnitintools, 'url' => $CFG->wwwroot."/mod/turnitintool/index.php?id=$course->id", 'type' => 'activity'),
@@ -265,6 +271,8 @@ if (!is_callable('build_navigation')) {
     $navigation = build_navigation('',$cm);
 }
 
+// Do not use navbar in 2.7+
+if ((property_exists($CFG, 'branch') AND ($CFG->branch < 27)) || (!property_exists($CFG, 'branch'))) {
 turnitintool_header($cm,
         $course,
         $_SERVER["REQUEST_URI"],
@@ -277,6 +285,19 @@ turnitintool_header($cm,
         update_module_button($cm->id, $course->id, $strturnitintool),
         navmenu($course)
 );
+} else {
+turnitintool_header($cm,
+        $course,
+        $_SERVER["REQUEST_URI"],
+        $turnitintool->name,
+        $SITE->fullname,
+        $navigation,
+        "",
+        "",
+        true,
+        update_module_button($cm->id, $course->id, $strturnitintool)
+);
+}
 
 /// Check to see if groups are being used and abstract for 1.8 if neccessary
 if (!is_callable('groups_get_activity_group')) {
@@ -315,7 +336,7 @@ $graderdos=array('allsubmissions','options','changeowner','tutors');
 if (!in_array($do,$studentdos) AND !in_array($do,$graderdos)) {
     turnitintool_print_error('dorequesterror','turnitintool');
     exit();
-} else if (!has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id)) AND in_array($do,$graderdos)) {
+} else if (!has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id)) AND in_array($do,$graderdos)) {
     turnitintool_print_error('permissiondeniederror','turnitintool');
     exit();
 }
@@ -338,8 +359,8 @@ if ($do=='intro') {
 }
 
 if ($do=='submissions') {
-    if ( !has_capability('mod/turnitintool:grade', get_context_instance(CONTEXT_MODULE, $cm->id)) 
-         AND !has_capability('mod/turnitintool:submit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+    if ( !has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id))
+         AND !has_capability('mod/turnitintool:submit', turnitintool_get_context('MODULE', $cm->id))) {
         turnitintool_print_error('permissiondeniederror','turnitintool');
         exit();
     } else {

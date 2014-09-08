@@ -1,5 +1,3 @@
-jQuery.noConflict();
-
 (function($){
     $.inboxTable = {
     init: function( uid, displayusi, turnitintool_datatables_strings, date_format ) {
