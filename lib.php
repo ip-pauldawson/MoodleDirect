@@ -6805,7 +6805,7 @@ function turnitintool_cleanobject( $dataobject ) {
  * @param string $select the select SQL query
  * @return boolean
  */
-function turnitintool_delete_records_select($table,$select='', $params) {
+function turnitintool_delete_records_select($table,$select='', $params=null) {
     global $DB;
     if (is_callable(array($DB,'delete_records_select'))) {
         return $DB->delete_records_select($table,$select, $params);
@@ -7222,7 +7222,7 @@ function turnitintool_print_error($input,$module=NULL,$link=NULL,$param=NULL,$fi
  * @param string $activity The activity prompting the log
  * e.g. PRINT_ERROR (default), API_ERROR, INCLUDE, REQUIRE_JS, REQUIRE_ONCE, REQUEST, REDIRECT
  */
-function turnitintool_activitylog($string,$activity) {
+function turnitintool_activitylog($string,$activity='') {
     global $CFG;
     if (isset($CFG->turnitin_enablediagnostic) AND $CFG->turnitin_enablediagnostic) {
         // ###### DELETE SURPLUS LOGS #########

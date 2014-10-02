@@ -11,6 +11,7 @@ Release:    v2013111404
     > Changed logging to use Moodle events where available
     > Fixed many depricated function warnings since the Moodle 2.7 release
     > Changed suggested API URL to api.turnitin.com
+    > Added default value for $params in turnitintool_delete_records_select
 
 ####################################################################################
 Date:       2014-Apr-04
