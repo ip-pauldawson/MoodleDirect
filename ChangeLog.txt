@@ -1,3 +1,11 @@
+2014-10-02 : Added default value for $params in turnitintool_delete_records_select
+2014-09-08 : Removed incorrect XML in install.xml
+2014-09-08 : Changed jQuery include method to use Moodle jQuery where possible
+2014-09-08 : 'Anonymous marking enabled' button is disabled if submission was not successful
+2014-09-08 : Assignment type is required when creating an assignment, cannot be set to blank
+2014-09-08 : Changed logging to use Moodle events where available
+2014-09-08 : Fixed many depricated function warnings since the Moodle 2.7 release
+2014-09-08 : Changed suggested API URL to api.turnitin.com
 2014-04-04 : Anonymous marking option is locked once a submission is made to any assignment part
 2014-04-04 : Upgraded jQuery to 1.11.0
 2014-04-04 : Added cURL CA cert link to INSTALL.html

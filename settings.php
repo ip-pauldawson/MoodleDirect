@@ -10,8 +10,29 @@ if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/turnitintool/lib.php');
     require_once($CFG->dirroot.'/mod/turnitintool/version.php');
 
-    $upgrade = turnitintool_updateavailable( $module );
-    $upgradeavailable = ( is_null( $upgrade ) ) ? '' : ' <a href="'.$upgrade.'"><i><b>'.get_string('upgradeavailable','turnitintool').'</b></i></a> ';
+    if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
+        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
+        $PAGE->requires->js($jsurl,true);
+
+        $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
+        $PAGE->requires->js($jsurl,true);
+    } else {
+        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
+        require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
+    }
+
+    $param_updatecheck=optional_param('updatecheck',null,PARAM_CLEAN);
+
+    $upgrade = null;
+    if (!is_null($param_updatecheck)) {
+      $upgrade = turnitintool_updateavailable($module);
+      $upgradeavailable = ( is_null( $upgrade ) ) ? ' - No updates available' : ' - <a href="'.$upgrade.'"><i><b>'.get_string('upgradeavailable','turnitintool').'</b></i></a> ';
+    } else {
+      $upgradeavailable = '&nbsp;<a href="'.$CFG->wwwroot.'/admin/settings.php?section=modsettingturnitintool&updatecheck=1">Check for updates</a>';
+    }
+
+    // Get current module version
+    $moduleversion = ( isset( $module->version ) ) ? $module->version : $module->versiondb;
 
     $toplinks = '<div><a href="'.$CFG->wwwroot.'/mod/turnitintool/extras.php">'.get_string("connecttest", "turnitintool")
                 .'</a> | <a href="'.$CFG->wwwroot.'/mod/turnitintool/extras.php?do=viewreport">'.get_string("showusage", "turnitintool")

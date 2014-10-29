@@ -1,5 +1,19 @@
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
+Date:       2014-Sept-08
+Release:    v2013111404
+
+- Fixes:
+    > Removed incorrect XML in install.xml
+    > Changed jQuery include method to use Moodle jQuery where possible
+    > 'Anonymous marking enabled' button is disabled if submission was not successful
+    > Assignment type is required when creating an assignment, cannot be set to blank
+    > Changed logging to use Moodle events where available
+    > Fixed many depricated function warnings since the Moodle 2.7 release
+    > Changed suggested API URL to api.turnitin.com
+    > Added default value for $params in turnitintool_delete_records_select
+
+####################################################################################
 Date:       2014-Apr-04
 Release:    v2013111403
 
