@@ -1,3 +1,4 @@
+2014-10-31 : Added cs language pack
 2014-10-02 : Added default value for $params in turnitintool_delete_records_select
 2014-09-08 : Removed incorrect XML in install.xml
 2014-09-08 : Changed jQuery include method to use Moodle jQuery where possible
