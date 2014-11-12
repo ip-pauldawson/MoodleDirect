@@ -1,3 +1,4 @@
+2014-11-12 : Fixed PHP 5.6 CURL file upload
 2014-10-31 : Added cs language pack
 2014-10-02 : Added default value for $params in turnitintool_delete_records_select
 2014-09-08 : Removed incorrect XML in install.xml
