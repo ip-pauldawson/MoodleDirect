@@ -424,6 +424,7 @@ class turnitintool_commclass {
         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 
         $cacertfile = $CFG->dataroot . '/moodleorgca.crt';
         if ( is_readable( $cacertfile ) ) {
