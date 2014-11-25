@@ -5,8 +5,8 @@
  * and open the template in the editor.
  */
 
-require_once('../../config.php');
-require_once('../../course/lib.php');
+require_once(__DIR__.'/../../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once("lib.php");
@@ -95,7 +95,7 @@ for ( $i=0; $i < count($aColumns); $i++ ) {
     $param_search_n[$i] = optional_param('sSearch_'.$i, null, PARAM_TEXT);
     if ( !is_null($param_searchable[$i]) && $param_searchable[$i] == "true" && ( $param_search != '' OR $param_search_n[$i] != '' ) ) {
         if ( !$start ) $sWhere .= " OR ";
-        
+
         if ( $aColumns[$i] == 'sb.submission_objectid' AND $param_search_n[$i] == '##deletable##' ) {
             $sWhere = ( $sWhere == ' AND ( ' ) ? '' : substr_replace( $sWhere, "", -3 ) . ' )';
             $sWhere .= " AND ( sb.submission_objectid IS NOT NULL OR sb.submission_filename IS NULL )";
