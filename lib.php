@@ -43,11 +43,11 @@ defined("TURNITINTOOL_APISRC") or define("TURNITINTOOL_APISRC","12");
 /**
  * Include the loaderbar class file
  */
-require_once("loaderbar.php");
+require_once(__DIR__."/loaderbar.php");
 /**
  * Include the comms class file
  */
-require_once("comms.php");
+require_once(__DIR__."/comms.php");
 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
