@@ -4,7 +4,7 @@
  * @copyright 2012 Turnitin
  */
 
-require_once("../../config.php");
+require_once(__DIR__."/../../config.php");
 require_once("lib.php");
 require_once("../../lib/formslib.php");
 require_once("../../lib/form/text.php");
