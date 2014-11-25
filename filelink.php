@@ -5,7 +5,7 @@
  */
 
 require_once(__DIR__."/../../config.php");
-require_once("lib.php");
+require_once(__DIR__."/lib.php");
 
 $id = required_param('id', PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // turnitintool ID

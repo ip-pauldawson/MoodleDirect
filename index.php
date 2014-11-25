@@ -4,7 +4,7 @@
  * @copyright 2012 Turnitin
  */
     require_once(__DIR__."/../../config.php");
-    require_once("lib.php");
+    require_once(__DIR__."/lib.php");
 
     if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
