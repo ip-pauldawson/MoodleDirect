@@ -7085,7 +7085,7 @@ function turnitintool_header($cm,$course,$url,$title='', $heading='', $navigatio
         if (!is_null($cmid)) {
             $category = $DB->get_record('course_categories', array('id'=>$course->category));
             $PAGE->navbar->ignore_active();
-            if (isset($category->name)) $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/category.php', array('id'=>$course->category)));
+            if (isset($category->name)) $PAGE->navbar->add($category->name, new moodle_url($CFG->wwwroot.'/course/index.php', array('categoryid'=>$course->category)));
             $PAGE->navbar->add($course->shortname, new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id)));
             $PAGE->navbar->add(get_string('modulenameplural', 'turnitintool'), new moodle_url($CFG->wwwroot.'/mod/turnitintool/index.php', array('id'=>$course->id)));
             $PAGE->navbar->add($title);
