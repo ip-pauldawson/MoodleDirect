@@ -216,7 +216,7 @@ if (!is_null($param_up)) { // Manual Submission to Turnitin
 }
 
 if (!is_null($param_submissiontype) AND $param_do=='submissions') {
-    if (isset($param_userid)) {
+    if ( (isset($param_userid)) && (has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id))) ) {
         $thisuserid=$param_userid;
     } else {
         $thisuserid=$USER->id;
