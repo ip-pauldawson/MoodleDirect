@@ -425,6 +425,11 @@ class turnitintool_commclass {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 
+        // curl_file_create only works on PHP 5.5+, this is for backwards compatibility.
+        if ( ! is_callable("curl_file_create") ) {
+            curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+        }
+
         $cacertfile = $CFG->dataroot . '/moodleorgca.crt';
         if ( is_readable( $cacertfile ) ) {
             curl_setopt( $ch, CURLOPT_CAINFO, $cacertfile );
@@ -722,7 +727,9 @@ class turnitintool_commclass {
         $assigndata['session-id']=$this->tiisession;
         $assigndata['src']=TURNITINTOOL_APISRC;
         $assigndata['apilang']=$this->getLang();
-        $assigndata['pdata']='@'.$filedata;
+        
+        // curl_file_create only works on PHP 5.5+, this is for backwards compatibility.
+        $assigndata['pdata']= (is_callable("curl_file_create")) ? curl_file_create($filedata) : '@'. $filedata;
 
         $this->result=$this->doRequest("POST", $this->apiurl, $assigndata,false,$status);
     }
