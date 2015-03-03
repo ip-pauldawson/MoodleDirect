@@ -1,5 +1,12 @@
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
+Date:       2014-Sept-08
+Release:    v2015030301
+
+- Fixes:
+    > When enrolling all students, check student submit capability
+
+####################################################################################
 Date:       2014-Oct-31
 Release:    v2014103101
 
