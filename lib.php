@@ -4158,7 +4158,7 @@ function turnitintool_enroll_student($cm,$turnitintool,$userid) {
         echo json_encode( $response );
         exit();
     }
-    if ( !has_capability( 'mod/turnitintool:submit', turnitintool_get_context( 'MODULE', $cm->id ) ) ) {
+    if ( !has_capability( 'mod/turnitintool:submit', turnitintool_get_context( 'MODULE', $cm->id ), $userid ) ) {
         $reason=get_string('permissiondeniederror','turnitintool');
         $response["status"] = 'error';
         $response["description"] = get_string('updateerror','turnitintool').': '.get_string('turnitinenrollstudents','turnitintool');
