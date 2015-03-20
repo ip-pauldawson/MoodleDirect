@@ -583,7 +583,6 @@ function turnitintool_update_instance($turnitintool) {
         }
 
         // Delete existing events for this assignment / part
-        // turnitintool_delete_records('turnitintool_submissions','turnitintoolid',$turnitintool->id,'submission_part',$part->id)
         $name = $turnitintoolnow->name.' - '.$part->partname;
 
         // $DB is not available for Moodle 1.9
@@ -1399,7 +1398,7 @@ function turnitintool_update_partnames($cm,$turnitintool,$post) {
  * @return array A notice array contains error details for display on page load in the case of an error nothing returned if no errors occur
  */
 function turnitintool_delete_part($cm,$turnitintool,$partid) {
-    global $CFG,$USER;
+    global $CFG,$USER,$DB;
     $notice['message']='';
     if ($turnitintool->numparts==1) {
         $error=true;
@@ -1429,7 +1428,19 @@ function turnitintool_delete_part($cm,$turnitintool,$partid) {
         }
 
         // Delete events for this assignment / part
-        turnitintool_delete_records_select('event', "modulename='turnitintool' AND instance=".$turnitintool->id." AND name='".$turnitintool->name." - ".turnitintool_partnamefromnum($partid)."'");
+        $name = $turnitintool->name.' - '.turnitintool_partnamefromnum($partid);
+
+        // $DB is not available for Moodle 1.9
+        if (is_callable(array($DB,'sql_compare_text'))) {
+            $deletewhere = 'modulename = :modulename
+            AND '.$DB->sql_compare_text('instance').' = :id
+            AND '.$DB->sql_compare_text('name').' = :name';
+        } else {
+            $deletewhere = 'modulename = \'turnitintool\'
+            AND instance = \''.$turnitintool->id.'\'
+            AND name = \''.$name.'\'';
+        }
+        turnitintool_delete_records_select('event', $deletewhere, array('modulename' => 'turnitintool', 'id' => $turnitintool->id, 'name' => $name));
 
         $update = new stdClass();
         $update->id=$turnitintool->id;
