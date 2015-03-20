@@ -582,7 +582,7 @@
             if (empty($rmessage)) {
                 $rmessage=get_string('connecttestcommerror','turnitintool');
             }
-            turnitintool_print_error('connecttesterror','turnitintool',$CFG->wwwroot.'/admin/module.php?module=turnitintool',$rmessage,__FILE__,__LINE__);
+            turnitintool_print_error('connecttesterror','turnitintool',$CFG->wwwroot.'/admin/modules.php?module=turnitintool',$rmessage,__FILE__,__LINE__);
         } else {
             $data=new object();
             $data->userid=$USER->id;
