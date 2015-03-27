@@ -5,11 +5,11 @@
  * and open the template in the editor.
  */
 
-require_once('../../config.php');
-require_once('../../course/lib.php');
+require_once(__DIR__.'/../../config.php');
+require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once("lib.php");
+require_once(__DIR__."/lib.php");
 
 if (!is_callable('groups_get_activity_group')) {
     $adminroot = admin_get_root();
