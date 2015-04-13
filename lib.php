@@ -3489,6 +3489,10 @@ ORDER BY s.submission_grade DESC
     $table->rows[0]->hcells[$n]->data = '<div>'.get_string( 'objectid', 'turnitintool' ).'</div>';
     $n++;
     $table->rows[0]->hcells[$n] = new stdClass();
+    $table->rows[0]->hcells[$n]->class = 'header c' . $n . ' markscell';
+    $table->rows[0]->hcells[$n]->data = '&nbsp;';
+    $n++;
+    $table->rows[0]->hcells[$n] = new stdClass();
     $table->rows[0]->hcells[$n]->class = 'header c' . $n . ' datecell';
     $table->rows[0]->hcells[$n]->data = '<div>'.get_string( 'posted', 'turnitintool' ).'</div>';
     $n++;
@@ -3700,6 +3704,12 @@ ORDER BY s.submission_grade DESC
             $table->rows[$i]->cells[$n] = new stdClass();
             $table->rows[$i]->cells[$n]->class = 'cell c' . $n . ' markscell';
             $table->rows[$i]->cells[$n]->data = $objectid;
+            $n++;
+
+            // Do the hidden column for the submission date - used for sorting.
+            $table->rows[$i]->cells[$n] = new stdClass();
+            $table->rows[$i]->cells[$n]->class = 'cell c' . $n . ' datecell';
+            $table->rows[$i]->cells[$n]->data = $submission->submission_modified;
             $n++;
 
             // Do Submission to Turnitin Form
