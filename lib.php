@@ -3489,7 +3489,7 @@ ORDER BY s.submission_grade DESC
     $table->rows[0]->hcells[$n]->data = '<div>'.get_string( 'objectid', 'turnitintool' ).'</div>';
     $n++;
     $table->rows[0]->hcells[$n] = new stdClass();
-    $table->rows[0]->hcells[$n]->class = 'header c' . $n . ' markscell';
+    $table->rows[0]->hcells[$n]->class = 'header c' . $n . ' datecell';
     $table->rows[0]->hcells[$n]->data = '&nbsp;';
     $n++;
     $table->rows[0]->hcells[$n] = new stdClass();
@@ -3592,7 +3592,7 @@ ORDER BY s.submission_grade DESC
                 $table->rows[$i]->cells[$n]->class = 'cell c' . $n . ' hide';
                 $table->rows[$i]->cells[$n]->data = $student;
                 $n++;
-                for ( $j = 0; $j < 15; $j++ ) {
+                for ( $j = 0; $j < 16; $j++ ) {
 
                     $table->rows[$i]->cells[$n] = new stdClass();
                     $table->rows[$i]->cells[$n]->class = 'cell c' . $n . ' hide';

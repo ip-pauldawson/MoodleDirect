@@ -128,7 +128,7 @@
                 $("#inboxTable a.fileicon").css( "background", "url(pix/fileicon.gif) no-repeat left center" ).css( "padding", "0px 0px 0px 16px" );
 
             },
-            "aaSorting": [[ 9, "desc" ],[ 7, "desc"],[ 1, "asc" ]],
+            "aaSorting": [[ 10, "desc" ],[ 8, "desc"],[ 1, "asc" ]],
             "sPaginationType": "full_numbers",
             "sDom": "r<\"top navbar\"lf><\"dt_page\"pi>t<\"bottom\"><\"dt_page\"pi>",
             "oLanguage": turnitintool_datatables_strings,
