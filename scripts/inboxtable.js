@@ -1,6 +1,6 @@
 (function($){
     $.inboxTable = {
-    init: function( uid, displayusi, turnitintool_datatables_strings, date_format ) {
+    init: function( uid, displayusi, turnitintool_datatables_strings ) {
         $.fn.dataTableExt.oStdClasses.sSortable = "header sort";
         $.fn.dataTableExt.oStdClasses.sSortableNone = "header nosort";
         $.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";

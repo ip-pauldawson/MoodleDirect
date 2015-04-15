@@ -3860,7 +3860,7 @@ $output = "
     var users = ".json_encode($studentuser_array).";
     var message = '".get_string('turnitinenrollstudents','turnitintool')."';
     jQuery(document).ready(function() {
-        jQuery.inboxTable.init( '".$cm->id."', ".$displayusi.", ".turnitintool_datatables_strings().", '".get_string('strftimedatetimeshort','langconfig')."' );
+        jQuery.inboxTable.init( '".$cm->id."', ".$displayusi.", ".turnitintool_datatables_strings()." );
         jQuery('#loader').css( 'display', 'none' );
         $sessionrefresh
     });
