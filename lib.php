@@ -1445,6 +1445,7 @@ function turnitintool_delete_part($cm,$turnitintool,$partid) {
         $update = new stdClass();
         $update->id=$turnitintool->id;
         $update->numparts=$turnitintool->numparts-1;
+        $update->needs_updating = 1;
         if (!turnitintool_update_record("turnitintool",$update)) {
             turnitintool_print_error('turnitintooldeleteerror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         }
@@ -5974,7 +5975,31 @@ function turnitintool_filetype_array($setup=true) {
  * A Standard Moodle function that moodle executes at the time the cron runs
  */
 function turnitintool_cron() {
+    global $CFG;
+
+    @include_once($CFG->dirroot."/lib/gradelib.php");
+    if (function_exists( 'grade_update')) {
+        // Get assignment that needs updating.
+        if ($turnitintool = turnitintool_get_record('turnitintool', "needs_updating", 1, "", "", "", "", '*')) {
+
+            $cm = get_coursemodule_from_instance("turnitintool", $turnitintool->id, $turnitintool->course);
+            $users = turnitintool_get_records('turnitintool_submissions','turnitintoolid',$turnitintool->id);
+
+            //Loop through every submission for this assignment and update the grades.
+            foreach ($users as $user) {
+                //Create a user ID object to be passed in.
+                $userid = new stdClass();
+                $userid->id = $user->userid;
+
+                $grades = turnitintool_buildgrades($turnitintool, $userid);
+                $params['idnumber'] = $cm->idnumber;
+
+                grade_update('mod/turnitintool', $turnitintool->course, 'mod', 'turnitintool', $turnitintool->id, 0, $grades, $params);
+            }
+        }
+    }
 }
+
 /**
  * Synchronises the assignment part settings with the settings that Turnitin has for the assignment parts
  *
