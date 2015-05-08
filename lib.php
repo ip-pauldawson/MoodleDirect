@@ -5446,7 +5446,6 @@ function turnitintool_checkforsubmission($cm,$turnitintool,$partid,$userid) {
             $subupdate['submission_nmfirstname']='';
             $subupdate['submission_nmlastname']='';
             if (!$updateid=turnitintool_update_record('turnitintool_submissions',$subupdate)) {
-exit();
                 turnitintool_print_error('submissionupdateerror', 'turnitintool', null, null, __FILE__, __LINE__);
                 exit();
             }
@@ -5804,6 +5803,10 @@ function turnitintool_upload_submission($cm,$turnitintool,$submission) {
     $post = new stdClass();
     $post->oid=(!is_null($submission->submission_objectid)) ? $submission->submission_objectid : '';
 
+    if (!empty($submission->submission_objectid)) {
+        $is_resubmission = 1;
+    }
+
     $loaderbar = new turnitintool_loaderbarclass(4); // (2xStart/End Session and Submit Paper total 3
     $tii = new turnitintool_commclass(turnitintool_getUID($user),$user->firstname,$user->lastname,$user->email,1,$loaderbar);
     $tii->startSession();
@@ -5938,7 +5941,12 @@ function turnitintool_upload_submission($cm,$turnitintool,$submission) {
         events_trigger('assessable_submitted', $eventdata);
     }
 
-    turnitintool_add_to_log($turnitintool->course, "add submission", "view.php?id=$cm->id", "User submitted '$submission->submission_title'", "$cm->id", $user->id);
+    if ($is_resubmission) {
+        turnitintool_add_to_log($turnitintool->course, "add submission", "view.php?id=$cm->id", "User submitted '$submission->submission_title' (resubmission)", "$cm->id", $user->id);
+    }
+    else {
+        turnitintool_add_to_log($turnitintool->course, "add submission", "view.php?id=$cm->id", "User submitted '$submission->submission_title'", "$cm->id", $user->id);
+    }
 
     $tii->endSession();
 
