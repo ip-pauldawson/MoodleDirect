@@ -5560,9 +5560,15 @@ function turnitintool_dofileupload($cm,$turnitintool,$userid,$post) {
         }
 
         if (!$resubmission) {
-            if (!$submitobject->id=turnitintool_insert_record('turnitintool_submissions',$submitobject)) {
-                turnitintool_print_error('submissioninserterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
-                exit();
+            // Prevent duplication in issues where the TII servers may be inaccessible.
+            if(!$check_existing = turnitintool_get_records_select('turnitintool_submissions',
+                                                         'userid='.$submitobject->userid.
+                                                         ' AND turnitintoolid='.$submitobject->turnitintoolid.
+                                                         ' AND submission_part='.$submitobject->submission_part)) {
+                if (!$submitobject->id = turnitintool_insert_record('turnitintool_submissions',$submitobject)) {
+                    turnitintool_print_error('submissioninserterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
+                    exit();
+                }
             }
         } else {
             $submitobject->id=$checksubmission->id;
@@ -5701,9 +5707,15 @@ function turnitintool_dotextsubmission($cm,$turnitintool,$userid,$post) {
         }
 
         if (!$resubmission) {
-            if (!$submitobject->id = turnitintool_insert_record('turnitintool_submissions',$submitobject)) {
-                turnitintool_print_error('submissioninserterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
-                exit();
+            // Prevent duplication in issues where the TII servers may be inaccessible.
+            if(!$check_existing = turnitintool_get_records_select('turnitintool_submissions',
+                                                         'userid='.$submitobject->userid.
+                                                         ' AND turnitintoolid='.$submitobject->turnitintoolid.
+                                                         ' AND submission_part='.$submitobject->submission_part)) {
+                if (!$submitobject->id = turnitintool_insert_record('turnitintool_submissions',$submitobject)) {
+                    turnitintool_print_error('submissioninserterror','turnitintool',NULL,NULL,__FILE__,__LINE__);
+                    exit();
+                }
             }
         } else {
             $submitobject->id=$checksubmission->id;
