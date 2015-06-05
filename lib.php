@@ -5778,10 +5778,18 @@ function turnitintool_dotextsubmission($cm,$turnitintool,$userid,$post) {
 function turnitintool_tempfile($suffix) {
     global $CFG;
     $fp=false;
-    $temp_dir=$CFG->dataroot.'/temp/turnitintool';
-    if ( !file_exists( $temp_dir ) ) {
-        mkdir( $temp_dir, $CFG->directorypermissions, true );
+
+    if (function_exists('make_temp_directory')) {
+        $temp_dir = make_temp_directory('turnitintool');
     }
+    else {
+        $temp_dir = $CFG->dataroot.'/temp/turnitintool';
+
+        if (!file_exists($temp_dir)) {
+            mkdir( $tempdir, $CFG->directorypermissions, true );
+        }
+    }
+
     while(!$fp) {
         $file = $temp_dir.DIRECTORY_SEPARATOR.mt_rand().'.'.$suffix;
         $fp = @fopen($file, 'w');
