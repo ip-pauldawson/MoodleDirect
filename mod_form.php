@@ -61,7 +61,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addElement('hidden','portfolio',0);
         $mform->setType('portfolio', PARAM_RAW);
 
-        $maxtii=20971520;
+        $maxtii=41943040;
         if ($CFG->maxbytes>$maxtii) {
             $maxbytes1=$maxtii;
         } else {
