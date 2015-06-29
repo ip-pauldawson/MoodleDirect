@@ -13,23 +13,27 @@ if ($ADMIN->fulltree) {
     $jquery = $CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js';
     $tool = $CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js';
 
-    if (isset($PAGE) AND is_callable(array('page_requirements_manager', 'jquery'))) {
-        // Use built-in jquery, if it's available.
-        $PAGE->requires->jquery();
+    $current_section = optional_param('section', '', PARAM_ALPHAEXT);
 
-        $jsurl = new moodle_url($tool);
-        $PAGE->requires->js($jsurl,true);
-    } else if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) {
-        // Use "new" moodle way, if possible.
-        $jsurl = new moodle_url($jquery);
-        $PAGE->requires->js($jsurl,true);
+    if ($current_section == 'modsettingturnitintool') {
+        if (isset($PAGE) AND is_callable(array('page_requirements_manager', 'jquery'))) {
+            // Use built-in jquery, if it's available.
+            $PAGE->requires->jquery();
 
-        $jsurl = new moodle_url($tool);
-        $PAGE->requires->js($jsurl,true);
-    } else {
-        // Try the old way, if nothing else works.
-        require_js($jquery);
-        require_js($tool);
+            $jsurl = new moodle_url($tool);
+            $PAGE->requires->js($jsurl,true);
+        } else if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) {
+            // Use "new" moodle way, if possible.
+            $jsurl = new moodle_url($jquery);
+            $PAGE->requires->js($jsurl,true);
+
+            $jsurl = new moodle_url($tool);
+            $PAGE->requires->js($jsurl,true);
+        } else {
+            // Try the old way, if nothing else works.
+            require_js($jquery);
+            require_js($tool);
+        }
     }
 
     $param_updatecheck=optional_param('updatecheck',null,PARAM_CLEAN);
