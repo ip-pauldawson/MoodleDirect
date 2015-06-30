@@ -4,11 +4,11 @@
  * @copyright 2012 Turnitin
  */
 
-    require_once('../../config.php');
-    require_once('../../course/lib.php');
+    require_once(__DIR__.'/../../config.php');
+    require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once("lib.php");
+    require_once(__DIR__."/lib.php");
 
     if (!is_callable('groups_get_activity_group')) {
         $adminroot = admin_get_root();
@@ -20,16 +20,16 @@
     if (isset($PAGE) AND @is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
         if (!is_callable(array('page_requirements_manager', 'jquery'))) {
             $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/jquery-1.11.0.min.js');
-            $PAGE->requires->js($jsurl);
+            $PAGE->requires->js($jsurl, true);
         } else {
             $PAGE->requires->jquery();
         }
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.min.js');
-        $PAGE->requires->js($jsurl);
+        $PAGE->requires->js($jsurl, true);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/datatables.plugins.js');
-        $PAGE->requires->js($jsurl);
+        $PAGE->requires->js($jsurl, true);
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
-        $PAGE->requires->js($jsurl,true);
+        $PAGE->requires->js($jsurl, true);
         $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
         $PAGE->requires->css($cssurl);
     } else {
@@ -285,10 +285,10 @@
             } );
         } );
     </script>';
-        
+
         echo '<form method="POST" id="turnitin_unlink" action="'.$CFG->wwwroot.'/mod/turnitintool/extras.php?do=unlinkusers">
 ';
-        echo '   
+        echo '
     <table id="unlink">
         <thead>
             <tr>
@@ -371,21 +371,21 @@
         }
 
     } else if ( !is_null($param_do) AND $param_do=="files" ) {
-        
+
         if (!is_callable("get_file_storage")) {
             turnitintool_print_error( "moodle2only", "turnitintool" );
             exit();
         }
-        
+
         if ( !is_null( $param_fileid ) ) {
-            
+
             if ( $filedata = $DB->get_record( "files", array( "id" => $param_fileid, "component" => "mod_turnitintool", "pathnamehash" => $param_filehash ) ) ) {
                 $submission = $DB->get_record( "turnitintool_submissions", array( "id" => $filedata->itemid ) );
             } else {
                 turnitintool_print_error( "submissiongeterror", "turnitintool" );
                 exit();
             }
-            
+
             if ( !is_null( $param_filerem ) ) {
                 $fs = get_file_storage();
                 $file = $fs->get_file($filedata->contextid,'mod_turnitintool','submission',$filedata->itemid,'/',$filedata->filename);
@@ -404,7 +404,7 @@
             }
 
         } else {
-        
+
             turnitintool_header(NULL,NULL,$_SERVER["REQUEST_URI"],get_string("modulenameplural", "turnitintool"), $SITE->fullname);
             $modules = $DB->get_record( 'modules', array( 'name' => 'turnitintool' ) );
             echo '
@@ -558,7 +558,7 @@
             turnitintool_footer();
 
         }
-        
+
     } else {
 
         $post = new stdClass();
@@ -582,7 +582,7 @@
             if (empty($rmessage)) {
                 $rmessage=get_string('connecttestcommerror','turnitintool');
             }
-            turnitintool_print_error('connecttesterror','turnitintool',$CFG->wwwroot.'/admin/module.php?module=turnitintool',$rmessage,__FILE__,__LINE__);
+            turnitintool_print_error('connecttesterror','turnitintool',$CFG->wwwroot.'/admin/settings.php?section=modsettingturnitintool',$rmessage,__FILE__,__LINE__);
         } else {
             $data=new object();
             $data->userid=$USER->id;

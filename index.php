@@ -3,13 +3,13 @@
  * @package   turnitintool
  * @copyright 2012 Turnitin
  */
-    require_once("../../config.php");
-    require_once("lib.php");
+    require_once(__DIR__."/../../config.php");
+    require_once(__DIR__."/lib.php");
 
     if (isset($PAGE) AND is_callable(array($PAGE->requires, 'js'))) { // Are we using new moodle or old?
         $jsurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');
         $PAGE->requires->js($jsurl,true);
-        $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/scripts/styles.css');
+        $cssurl = new moodle_url($CFG->wwwroot.'/mod/turnitintool/styles.css');
         $PAGE->requires->css($cssurl);
     } else {
         require_js($CFG->wwwroot.'/mod/turnitintool/scripts/turnitintool.js');

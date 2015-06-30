@@ -1,6 +1,6 @@
 (function($){
     $.inboxTable = {
-    init: function( uid, displayusi, turnitintool_datatables_strings, date_format ) {
+    init: function( uid, displayusi, turnitintool_datatables_strings ) {
         $.fn.dataTableExt.oStdClasses.sSortable = "header sort";
         $.fn.dataTableExt.oStdClasses.sSortableNone = "header nosort";
         $.fn.dataTableExt.oStdClasses.sSortAsc = "header asc";
@@ -8,13 +8,6 @@
         $.fn.dataTableExt.oStdClasses.sWrapper = "submissionTable";
         $.fn.dataTableExt.oStdClasses.sStripeOdd = "row r0";
         $.fn.dataTableExt.oStdClasses.sStripeEven = "row r1";
-
-        // Decide table ordering based on langconfig setting
-        if (date_format ==  "%d/%m/%y, %H:%M") {
-            sortSubmittedDate = "date-uk";
-        }else{
-            sortSubmittedDate = "date"; //US date is default
-        }
 
         var oTable = $("#inboxTable").dataTable( {
             "aoColumns": [
@@ -24,17 +17,18 @@
                     { "bSearchable": true, "bSortable": true, "bVisible": false },                                               // [3] Column to store the USI (Unique Student Identifier), used with Rosetta Pseudo behaviour
                     { "bSearchable": false, "bSortable": true, "bVisible": displayusi, "iDataSort": [ 3 ] },                     // [4] USI field, blank but will store the USI in row header if enabled
                     { "bSearchable": true, "bSortable": true, "sType": "numeric", "bVisible": true },                            // [5] Paper ID Column
-                    { "bSearchable": false, "bSortable": true, "sType": sortSubmittedDate, "bVisible": true },                   // [6] The Submitted Date
-                    { "bSearchable": false, "bSortable": true, "asSorting": [ "desc" ], "sType": "numeric", "bVisible": false }, // [7] Raw data for the Similarity score
-                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": true, "iDataSort": [ 7 ] },       // [8] Similarity Display Column, the HTML for the originality report launch
-                    { "bSearchable": true, "bSortable": true, "asSorting": [ "desc" ], "bVisible": false },                      // [9] Overall Grade Column, Used to sort and to Display above the Grade Display Column
-                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": false },                          // [10] Raw data for the submission grade, Used to sort
-                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": true, "aDataSort": [ 10 ] },      // [11] Grade Display Column, the HTML for the grademark launch
-                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [12] Student View Indicator column
-                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [13] Comments / Feed Back column
-                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [14] Download Button column
-                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [14] Refresh Row column
-                    { "bSearchable": false, "bSortable": false, "bVisible": true }                                               // [15] Delete Button column
+                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": false },                          // [6] Raw data for submitted date, used for sorting.
+                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": true, "iDataSort": [ 6 ] },       // [7] The Submitted Date
+                    { "bSearchable": false, "bSortable": true, "asSorting": [ "desc" ], "sType": "numeric", "bVisible": false }, // [8] Raw data for the Similarity score
+                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": true, "iDataSort": [ 8 ] },       // [9] Similarity Display Column, the HTML for the originality report launch
+                    { "bSearchable": true, "bSortable": true, "asSorting": [ "desc" ], "bVisible": false },                      // [10] Overall Grade Column, Used to sort and to Display above the Grade Display Column
+                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": false },                          // [11] Raw data for the submission grade, Used to sort
+                    { "bSearchable": false, "bSortable": true, "sType": "numeric", "bVisible": true, "aDataSort": [ 11 ] },      // [12] Grade Display Column, the HTML for the grademark launch
+                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [13] Student View Indicator column
+                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [14] Comments / Feed Back column
+                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [15] Download Button column
+                    { "bSearchable": false, "bSortable": false, "bVisible": true },                                              // [16] Refresh Row column
+                    { "bSearchable": false, "bSortable": false, "bVisible": true }                                               // [17] Delete Button column
                 ],
             "fnDrawCallback": function ( oSettings ) {
 
@@ -63,7 +57,7 @@
                     var sort_table = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[1];
                     var usi = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[3];
                     var paperid = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[5];
-                    var overallgrade = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[9];
+                    var overallgrade = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[10];
 
                     if ( sort != sLastGroup ) {
                         var nGroup = document.createElement( "tr" );
@@ -134,7 +128,7 @@
                 $("#inboxTable a.fileicon").css( "background", "url(pix/fileicon.gif) no-repeat left center" ).css( "padding", "0px 0px 0px 16px" );
 
             },
-            "aaSorting": [[ 9, "desc" ],[ 7, "desc"],[ 1, "asc" ]],
+            "aaSorting": [[ 10, "desc" ],[ 8, "desc"],[ 1, "asc" ]],
             "sPaginationType": "full_numbers",
             "sDom": "r<\"top navbar\"lf><\"dt_page\"pi>t<\"bottom\"><\"dt_page\"pi>",
             "oLanguage": turnitintool_datatables_strings,

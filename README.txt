@@ -1,5 +1,24 @@
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
+Date:       2015-Jun-30
+Release:    v2015030302
+
+- Increase submission limit to Turnitin to 40Mb for newly created classes.
+- Updated Catalan language pack.
+- Log entry added for Assignment Resubmission.
+- Categories link added to inbox bread crumb.
+- Requirement paths consolidated.
+- Fixes:
+    - Bug with events table insertion in 2.5.
+    - Plugin now works with PHP 5.6.6.
+    - Sorting by submitted date in submission inbox.
+    - Styles link corrected on index.php.
+    - Settings warning notice due to jquery inclusion no longer appears.
+    - jQuery require function in settings.
+    - Include jQuery in page header on unlink users page.
+    - Modulename lang string now a fixed value rather than relying on other string value.
+
+####################################################################################
 Date:       2014-Sept-08
 Release:    v2015030301
 
