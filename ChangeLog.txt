@@ -1,3 +1,17 @@
+2015-06-30 : Increase submission limit to Turnitin to 40Mb for newly created classes.
+2015-06-30 : Updated Catalan language pack.
+2015-06-30 : Log entry added for Assignment Resubmission.
+2015-06-30 : Categories link added to inbox bread crumb.
+2015-06-30 : Requirement paths consolidated.
+2015-06-30 : Fixes:
+2015-06-30 : Bug with events table insertion in 2.5.
+2015-06-30 : Plugin now works with PHP 5.6.6.
+2015-06-30 : Sorting by submitted date in submission inbox.
+2015-06-30 : Styles link corrected on index.php.
+2015-06-30 : Settings warning notice due to jquery inclusion no longer appears.
+2015-06-30 : jQuery require function in settings.
+2015-06-30 : Include jQuery in page header on unlink users page.
+2015-06-30 : Modulename lang string now a fixed value rather than relying on other string value.
 2015-03-03 : When enrolling all students, check student submit capability
 2014-10-31 : Added cs language pack
 2014-10-02 : Added default value for $params in turnitintool_delete_records_select
