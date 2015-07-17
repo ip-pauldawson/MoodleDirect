@@ -5011,8 +5011,8 @@ function turnitintool_view_submission_form($cm,$turnitintool,$submissionid=NULL)
 
     $optional_params = new stdClass();
     $optional_params->type = optional_param('type',0,PARAM_CLEAN);
-    $optional_params->userid = optional_param('userid',0,PARAM_CLEAN);
-    $optional_params->agreement = optional_param('agreement',0,PARAM_CLEAN);
+    $optional_params->userid = optional_param('userid',null,PARAM_CLEAN);
+    $optional_params->agreement = optional_param('agreement',null,PARAM_CLEAN);
 
     $cansubmit=turnitintool_cansubmit($cm,$turnitintool,$USER);
 
