@@ -224,7 +224,11 @@ if (!is_null($param_submissiontype) AND $param_do=='submissions') {
     }
 
     if ($param_submissiontype==1) {
-        $notice=turnitintool_dofileupload($cm,$turnitintool,$thisuserid,$post);
+        if ($CFG->branch >= 29) {
+            $notice = turnitintool_dofileupload_post_29($cm,$turnitintool,$thisuserid,$post);
+        } else {
+            $notice = turnitintool_dofileupload_pre_29($cm,$turnitintool,$thisuserid,$post);
+        }
     } else if ($param_submissiontype==2) {
         $notice=turnitintool_dotextsubmission($cm,$turnitintool,$thisuserid,$post);
     }
