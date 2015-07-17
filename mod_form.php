@@ -27,7 +27,9 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'client');
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'server');
 
-        if (is_callable(array($this,'add_intro_editor'))) {
+        if ($CFG->branch >= 29) {
+            $this->standard_intro_elements(get_string('turnitintoolintro', 'turnitintool'));
+        } elseif (is_callable(array($this,'add_intro_editor'))) {
             $this->add_intro_editor(true, get_string('turnitintoolintro', 'turnitintool'));
         } else {
             $mform->addElement('htmleditor', 'intro', get_string('turnitintoolintro', 'turnitintool'));
