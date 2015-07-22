@@ -261,7 +261,7 @@ if (!is_null($param_submitted) AND $param_do=='options') {
 turnitintool_add_to_log($course->id, "view turnitintool", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
 
 // Enable activity completion on page view.
-if ((property_exists($CFG, 'branch') && ($CFG->branch >= 20)) {
+if (property_exists($CFG, 'branch') && $CFG->branch >= 20) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
