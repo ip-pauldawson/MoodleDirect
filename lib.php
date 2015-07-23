@@ -5550,6 +5550,7 @@ function turnitintool_checkforsubmission($cm,$turnitintool,$partid,$userid) {
  * @return array result and message
  */
 function turnitintool_dofileupload_post_29($cm,$turnitintool,$userid,$post) {
+    global $USER,$CFG;
     $param_do=optional_param('do',null,PARAM_CLEAN);
 
     $checksubmission=turnitintool_checkforsubmission($cm,$turnitintool,$post['submissionpart'],$userid);
