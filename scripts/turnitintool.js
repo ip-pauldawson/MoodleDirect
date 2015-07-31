@@ -28,6 +28,22 @@ var sid;
 var openurl;
 var newwindow;
 
+(function($){
+    // Show loading if submission passes validation
+    $(document).on('submit', 'form#post_29_submission_form', function() {
+        // We need a submission title.
+        if (!($("#id_submissiontitle").val())) {
+            return false;
+        }
+
+        try {
+            var myValidator = validate_submit_assignment;
+        } catch(e) {
+            return true;
+        }
+    });
+})(jQuery);
+
 // Configure submit paper form elements depending on what submission type is allowed
 function updateSubFormPost29(submissiontype) {
     console.log(submissiontype);

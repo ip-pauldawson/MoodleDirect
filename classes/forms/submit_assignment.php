@@ -58,6 +58,13 @@ class submit_assignment extends moodleform {
 
         $mform = $this->_form;
 
+        // Display file upload error if need be.
+        if (isset($_SESSION["notice"]["type"]) AND $_SESSION["notice"]["type"] == "error") {
+            $mform->addElement('html', '<div id="upload_error" class="felement ftext error"><span id="upload_error_text" class="error">'.$_SESSION["notice"]["message"].'</span></div>');
+            unset($_SESSION["notice"]["type"]);
+            unset($_SESSION["notice"]["message"]);
+        }
+
         if (!empty($parts)) {
             // Upload type.
             switch ($turnitintool->type) {
@@ -130,17 +137,17 @@ class submit_assignment extends moodleform {
 
             if (!$disableform) {
                 // Submission Title.
-                $mform->addElement('text', 'submissiontitle', get_string('submissiontitle', 'turnitintooltwo'), array("class" => "formwide"));
+                $mform->addElement('text', 'submissiontitle', get_string('submissiontitle', 'turnitintool'), array("class" => "formwide"));
                 $mform->setType('submissiontitle', PARAM_TEXT);
                 $mform->addHelpButton('submissiontitle', 'submissiontitle', 'turnitintool');
-                $mform->addRule('submissiontitle', get_string('error'), 'required');
+                $mform->addRule('submissiontitle', get_string('submissiontitleerror', 'turnitintool'), 'required', '', 'client');
 
                 // Handle assignment parts.
                 if (count($parts)>1) {
                     foreach ($parts as $part) {
                         $options_parts[$part->id] = $part->partname;
                     }
-                    $mform->addElement('select', 'submissionpart', get_string('selectoption', 'turnitintool'), $options_parts, array("class" => "formwide", "onchange" => "updateSubForm(submissionArray,stringsArray,this.form,".$turnitintool->reportgenspeed.",'".$utype."')"));
+                    $mform->addElement('select', 'submissionpart', get_string('submissionpart', 'turnitintool'), $options_parts, array("class" => "formnarrow", "onchange" => "updateSubForm(submissionArray,stringsArray,this.form,".$turnitintool->reportgenspeed.",'".$utype."')"));
                     $mform->addHelpButton('submissionpart', 'submissionpart', 'turnitintool');
                 }
                 else {
