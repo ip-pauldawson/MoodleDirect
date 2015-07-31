@@ -5064,14 +5064,15 @@ function turnitintool_view_submission_form_post_29($cm, $turnitintool, $optional
 
     require_once('classes/forms/submit_assignment.php');
 
-    //Instantiate submit_assignment form 
-    $mform = new submit_assignment($CFG->wwwroot.'/mod/turnitintool/view.php'.'?id='.$cm->id.'&do=submissions&type='.$optional_params->type, array(
+    //Instantiate submit_assignment form
+    $submission_mform = new submit_assignment($CFG->wwwroot.'/mod/turnitintool/view.php'.'?id='.$cm->id.'&do=submissions&type='.$optional_params->type, array(
         'cm' => $cm,
         'turnitintool' => $turnitintool,
         'optional_params' => $optional_params,
-        'cansubmit' => $cansubmit));
+        'cansubmit' => $cansubmit)
+        , 'post', '', array("id" => "post_29_submission_form"));
 
-    $output = $mform->display();
+    $output = $submission_mform->display();
 
     if (has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id))) {
         $utype="tutor";
@@ -5633,6 +5634,20 @@ function turnitintool_dofileupload_post_29($cm,$turnitintool,$userid,$post) {
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_turnitintool', 'submissions', $submitobject->id, "timecreated", false);
 
+    // This should only return 1 result.
+    if (count($files) == 0) {
+        $notice['result'] = false;
+
+        $_SESSION["notice"]["message"] = get_string('submissionfileerror', 'turnitintool');
+        $_SESSION["notice"]["type"] = "error";
+
+        turnitintool_delete_records('turnitintool_submissions','id',$submitobject->id);
+
+        return $notice;
+    } else {
+        $notice['result'] = true;
+    }
+
     if (has_capability('mod/turnitintool:grade', turnitintool_get_context('MODULE', $cm->id)) AND !$turnitintool->autosubmission) {
         turnitintool_redirect($CFG->wwwroot.'/mod/turnitintool/view.php?id='.$cm->id.'&do=allsubmissions');
         exit();
@@ -5826,7 +5841,12 @@ function turnitintool_dotextsubmission($cm,$turnitintool,$userid,$post) {
     }
 
     if (empty($post['submissiontext'])) {
-        $notice["error"].=get_string('submissiontexterror','turnitintool').'<br />';
+        if ($CFG->branch >= 29) {
+            $_SESSION["notice"]["message"] = get_string('submissiontexterror','turnitintool');
+            $_SESSION["notice"]["type"] = "error";
+        } else {
+            $notice["error"].=get_string('submissiontexterror','turnitintool').'<br />';
+        }
         $error=true;
     }
 

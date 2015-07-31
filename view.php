@@ -376,7 +376,7 @@ if ($do=='submissions') {
         exit();
     } else {
         echo turnitintool_view_student_submissions($cm,$turnitintool);
-        if (isset($notice["error"])) {
+        if (isset($notice["error"]) && ($CFG->branch < 29)) {
             turnitintool_box_start('generalbox boxwidthwide boxaligncenter error', 'errorbox');
             echo $notice["error"];
             turnitintool_box_end();
