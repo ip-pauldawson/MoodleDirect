@@ -197,7 +197,7 @@ function xmldb_turnitintool_upgrade($oldversion) {
             insert_record($table,$dataobject);
         }
     }
-    
+
     if ($result && $oldversion < 2010102601) {
         if (is_callable(array($DB,'get_manager'))) {
 
@@ -240,9 +240,9 @@ function xmldb_turnitintool_upgrade($oldversion) {
             $dbman->rename_field($table3, $field8, "commenttext");
             $field9 = new xmldb_field('date', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'comment');
             $dbman->rename_field($table3, $field9, "dateupdated");
-            
+
         } else {
-            
+
             // Change the field size from 50 to 20 to add oracle compatibility
             $table1 = new XMLDBTable('turnitintool_submissions');
             $field1 = new XMLDBField('submission_objectid');
@@ -303,11 +303,11 @@ function xmldb_turnitintool_upgrade($oldversion) {
             $result = $result && change_field_type($table, $field1);
         }
     }
-    
+
     if ($result && $oldversion < 2011081701) {
     	if (is_callable(array($DB,'get_manager'))) {
     		$dbman=$DB->get_manager();
-    		
+
             // Add erater fields
             $table = new xmldb_table('turnitintool');
             $field1 = new xmldb_field('erater', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'perpage');
@@ -318,7 +318,7 @@ function xmldb_turnitintool_upgrade($oldversion) {
             $field6 = new xmldb_field('erater_usage', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'erater_grammar');
             $field7 = new xmldb_field('erater_mechanics', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'erater_usage');
             $field8 = new xmldb_field('erater_style', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'erater_mechanics');
-            
+
             if (!$dbman->field_exists($table, $field1)) {
             	$dbman->add_field($table, $field1);
             }
@@ -343,7 +343,7 @@ function xmldb_turnitintool_upgrade($oldversion) {
             if (!$dbman->field_exists($table, $field8)) {
             	$dbman->add_field($table, $field8);
             }
-            
+
     	} else {
     		// Add erater fields
     		$table = new XMLDBTable('turnitintool');
@@ -355,34 +355,34 @@ function xmldb_turnitintool_upgrade($oldversion) {
     		$field6 = new XMLDBField('erater_usage');
     		$field7 = new XMLDBField('erater_mechanics');
     		$field8 = new XMLDBField('erater_style');
-    
+
     		$field1->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'perpage');
     		$result = $result && add_field($table, $field1);
-    		
+
     		$field2->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater');
     		$result = $result && add_field($table, $field2);
-    		
+
     		$field3->setAttributes(XMLDB_TYPE_TEXT, '10', null, null, null, null, null, null, 'erater_handbook');
     		$result = $result && add_field($table, $field3);
-    		
+
     		$field4->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater_dictionary');
     		$result = $result && add_field($table, $field4);
-    		
+
     		$field5->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater_spelling');
     		$result = $result && add_field($table, $field5);
-    		
+
     		$field6->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater_grammar');
     		$result = $result && add_field($table, $field6);
-    		
+
     		$field7->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater_usage');
     		$result = $result && add_field($table, $field7);
-    		
+
     		$field8->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, null, 'erater_mechanics');
     		$result = $result && add_field($table, $field8);
-    		
+
     	}
     }
-    
+
     if ($result && $oldversion < 2012030501) {
     	if (is_callable(array($DB,'get_manager'))) {
             $dbman=$DB->get_manager();
@@ -402,7 +402,7 @@ function xmldb_turnitintool_upgrade($oldversion) {
             }
         }
     }
-    
+
     if ($result && $oldversion < 2012042701) {
     	if (is_callable(array($DB,'get_manager'))) {
             $dbman=$DB->get_manager();
@@ -474,6 +474,13 @@ function xmldb_turnitintool_upgrade($oldversion) {
             $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'transmatch');
             $result = $result && add_field($table, $field);
         }
+    }
+
+    if ($result && $oldversion < 2015030303) {
+        // Update URL for UK accounts.
+        $apiurl = get_config('', 'turnitin_apiurl');
+        $newurl = str_replace('submit.ac.uk', 'api.turnitinuk.com', $apiurl);
+        set_config('turnitin_apiurl', $newurl);
     }
 
     return $result;
