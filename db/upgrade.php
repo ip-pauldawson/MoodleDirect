@@ -479,11 +479,7 @@ function xmldb_turnitintool_upgrade($oldversion) {
     if ($result && $oldversion < 2015030303) {
         // Update URL for UK accounts.
         $apiurl = get_config('', 'turnitin_apiurl');
-        if (is_callable('str_ireplace')) {
-            $newurl = str_ireplace('submit.ac.uk', 'api.turnitinuk.com', $apiurl);
-        } else {
-            $newurl = str_replace('submit.ac.uk', 'api.turnitinuk.com', $apiurl);
-        }
+        $newurl = str_replace('submit.ac.uk', 'api.turnitinuk.com', strtolower($apiurl));
         set_config('turnitin_apiurl', $newurl);
     }
 
