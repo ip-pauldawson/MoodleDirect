@@ -1,3 +1,7 @@
+2015-08-18 : Support for Moodle 2.9 including rewriting of submission workflow.
+2015-08-18 : API URL changed for UK accounts.
+2015-08-18 : Due date change no longer causes calendar event error.
+2015-08-18 : Missing institutional check field added to Moodle database.
 2015-06-30 : Increase submission limit to Turnitin to 40Mb for newly created classes.
 2015-06-30 : Updated Catalan language pack.
 2015-06-30 : Log entry added for Assignment Resubmission.
