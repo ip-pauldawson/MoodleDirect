@@ -178,9 +178,13 @@ button {
 #turnitintool_style .uploadtable {
     margin: 8px 0px 0px 0px;
 }
-#turnitintool_style .uploadtable input.formwide,
-#turnitintool_style .uploadtable select.formwide {
+#turnitintool_style input.formwide,
+#turnitintool_style select.formwide {
     width: 55%;
+}
+#turnitintool_style input.formnarrow,
+#turnitintool_style select.formnarrow {
+    width: 20%;
 }
 #turnitintool_style .uploadtable td {
     background-color: #FFFFFF;
@@ -531,4 +535,13 @@ button {
     text-align: center;
     width: 60%;
     float: left;
+}
+
+#upload_error {
+    margin-bottom: 17px;
+    width: 100%;
+}
+#upload_error_text {
+    text-align: center;
+    width: 100%;
 }

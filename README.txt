@@ -1,5 +1,15 @@
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
+Date:       2015-Aug-18
+Release:    v2015030303
+
+- Support for Moodle 2.9 including rewriting of submission workflow.
+- API URL changed for UK accounts.
+- Fixes:
+    - Due date change no longer causes calendar event error.
+    - Missing institutional check field added to Moodle database.
+
+####################################################################################
 Date:       2015-Jun-30
 Release:    v2015030302
 

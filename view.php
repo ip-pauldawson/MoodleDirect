@@ -6,6 +6,7 @@
 
 require_once(__DIR__."/../../config.php");
 require_once(__DIR__."/lib.php");
+require_once($CFG->libdir."/completionlib.php");
 require_once($CFG->libdir."/formslib.php");
 require_once($CFG->libdir."/form/text.php");
 require_once($CFG->libdir."/form/datetimeselector.php");
@@ -224,7 +225,11 @@ if (!is_null($param_submissiontype) AND $param_do=='submissions') {
     }
 
     if ($param_submissiontype==1) {
-        $notice=turnitintool_dofileupload($cm,$turnitintool,$thisuserid,$post);
+        if ($CFG->branch >= 29) {
+            $notice = turnitintool_dofileupload_post_29($cm,$turnitintool,$thisuserid,$post);
+        } else {
+            $notice = turnitintool_dofileupload_pre_29($cm,$turnitintool,$thisuserid,$post);
+        }
     } else if ($param_submissiontype==2) {
         $notice=turnitintool_dotextsubmission($cm,$turnitintool,$thisuserid,$post);
     }
@@ -255,6 +260,12 @@ if (!is_null($param_submitted) AND $param_do=='options') {
 }
 
 turnitintool_add_to_log($course->id, "view turnitintool", "view.php?id=$cm->id", "User viewed assignment '$turnitintool->name'", "$cm->id");
+
+// Enable activity completion on page view.
+if (property_exists($CFG, 'branch') && $CFG->branch >= 20) {
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
 
 /// Print the page header
 $strturnitintools = get_string("modulenameplural", "turnitintool");
@@ -366,7 +377,7 @@ if ($do=='submissions') {
         exit();
     } else {
         echo turnitintool_view_student_submissions($cm,$turnitintool);
-        if (isset($notice["error"])) {
+        if (isset($notice["error"]) && ($CFG->branch < 29)) {
             turnitintool_box_start('generalbox boxwidthwide boxaligncenter error', 'errorbox');
             echo $notice["error"];
             turnitintool_box_end();

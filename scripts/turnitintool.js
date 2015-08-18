@@ -1,3 +1,18 @@
+(function($){
+    // Configure submit paper form elements depending on what submission type is selected
+    $(document).on('change', '#id_submissiontype', function() {
+        if ($("#id_submissiontype").val() == 1) {
+            $("#id_submissiontext").parent().parent().hide();
+            $("#id_submissionfile").parent().parent().show();
+        }
+
+        if ($("#id_submissiontype").val() == 2) {
+            $("#id_submissionfile").parent().parent().hide();
+            $("#id_submissiontext").parent().parent().show();
+        }
+    });
+})(jQuery);
+
 var choiceUserString;
 var choiceCountString;
 if (getcookie('turnitintool_choice_user')==null) {
@@ -12,6 +27,33 @@ var enrollcount = 0;
 var sid;
 var openurl;
 var newwindow;
+
+(function($){
+    // Show loading if submission passes validation
+    $(document).on('submit', 'form#post_29_submission_form', function() {
+        // We need a submission title.
+        if (!($("#id_submissiontitle").val())) {
+            return false;
+        }
+
+        try {
+            var myValidator = validate_submit_assignment;
+        } catch(e) {
+            return true;
+        }
+    });
+})(jQuery);
+
+// Configure submit paper form elements depending on what submission type is allowed
+function updateSubFormPost29(submissiontype) {
+    console.log(submissiontype);
+    if (submissiontype == 2) {
+        $("#id_submissionfile").parent().parent().hide();
+    } else {
+        $("#id_submissiontext").parent().parent().hide();
+    }
+}
+
 function updateSubForm(submissionArray,stringsArray,thisForm,genspeed,user) {
     if (user==null) {
         user="tutor";
