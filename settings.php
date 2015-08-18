@@ -198,7 +198,7 @@ if ($ADMIN->fulltree) {
                        1 => get_string('yes', 'turnitintool')
                      );
 
-    if ( $CFG->turnitin_useanon ) {
+    if ( !empty($CFG->turnitin_useanon) ) {
         $settings->add(new admin_setting_configselect('turnitin_default_anon', get_string('anon','turnitintool'),
                         '', 0, $ynoptions ));
     }
@@ -214,7 +214,7 @@ if ($ADMIN->fulltree) {
                        '', 0, $genoptions ));
 
     $suboptions = array( 0 => get_string('norepository','turnitintool'), 1 => get_string('standardrepository','turnitintool'));
-    if ( $CFG->turnitin_userepository ) {
+    if ( !empty($CFG->turnitin_userepository) ) {
         array_push( $suboptions, get_string('institutionalrepository','turnitintool') );
     }
 
