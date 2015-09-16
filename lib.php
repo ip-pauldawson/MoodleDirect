@@ -53,7 +53,7 @@ require_once(__DIR__."/comms.php");
  * Include the calendar class file.
  */
 require_once($CFG->dirroot . '/calendar/lib.php');
- 
+
 /**
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
@@ -5087,7 +5087,7 @@ function turnitintool_view_submission_form_post_29($cm, $turnitintool, $optional
                     updateSubForm(submissionArray,stringsArray,document.submissionform,'.$turnitintool->reportgenspeed.',"'.$utype.'");
                     //-->
                 </script>';
-    
+
     return $output;
 }
 
