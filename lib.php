@@ -5084,10 +5084,10 @@ function turnitintool_view_submission_form_post_29($cm, $turnitintool, $optional
     $output.='  <script language="javascript" type="text/javascript">
                     <!--
                     updateSubFormPost29('.$turnitintool->type.');
-                    updateSubForm(submissionArray,stringsArray,document.submissionform,'.$turnitintool->reportgenspeed.',"'.$utype.'");
+                    updateSubForm(submissionArray,stringsArray,document.getElementById("post_29_submission_form"),'.$turnitintool->reportgenspeed.',"'.$utype.'");
                     //-->
                 </script>';
-
+    
     return $output;
 }
 
