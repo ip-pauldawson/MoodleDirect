@@ -46,7 +46,6 @@ var newwindow;
 
 // Configure submit paper form elements depending on what submission type is allowed
 function updateSubFormPost29(submissiontype) {
-    console.log(submissiontype);
     if (submissiontype == 2) {
         $("#id_submissionfile").parent().parent().hide();
     } else {
@@ -58,8 +57,6 @@ function updateSubForm(submissionArray,stringsArray,thisForm,genspeed,user) {
     if (user==null) {
         user="tutor";
     }
-    // submissionArray(userid,partid,title)
-    // stringsArray('addsubmission','resubmit','resubmission','resubmissionnotenabled');
     var userid = thisForm.userid.value;
     var partid = thisForm.submissionpart.value;
     if (genspeed>0) {
