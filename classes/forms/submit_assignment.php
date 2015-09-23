@@ -11,7 +11,7 @@ class submit_assignment extends moodleform {
     //Add elements to form
     public function definition() {
         global $CFG, $USER, $COURSE, $cm, $turnitintool;
- 
+
         $cm = $this->_customdata['cm'];
         $turnitintool = $this->_customdata['turnitintool'];
         $optional_params = $this->_customdata['optional_params'];
@@ -159,7 +159,24 @@ class submit_assignment extends moodleform {
                 }
 
                 // File input.
-                $mform->addElement('filemanager', 'submissionfile', get_string('filetosubmit', 'turnitintool'), null, array('maxfiles' => 1));
+                $maxbytessite = ($CFG->maxbytes == 0 || $CFG->maxbytes > TURNITINTOOL_MAX_FILE_UPLOAD_SIZE) ?
+                            TURNITINTOOL_MAX_FILE_UPLOAD_SIZE : $CFG->maxbytes;
+                $maxbytescourse = ($COURSE->maxbytes == 0 || $COURSE->maxbytes > TURNITINTOOL_MAX_FILE_UPLOAD_SIZE) ?
+                            TURNITINTOOL_MAX_FILE_UPLOAD_SIZE : $COURSE->maxbytes;
+
+                $maxfilesize = get_user_max_upload_file_size(context_module::instance($cm->id),
+                                                $maxbytessite,
+                                                $maxbytescourse,
+                                                $turnitintool->maxfilesize);
+                $maxfilesize = ($maxfilesize <= 0) ? TURNITINTOOL_MAX_FILE_UPLOAD_SIZE : $maxfilesize;
+                $turnitintoolfileuploadoptions = array('maxbytes' => $maxfilesize,
+                                            'subdirs' => false, 'maxfiles' => 1,
+                                            'accepted_types' => array('.doc', '.docx', '.rtf', '.txt', '.pdf', '.htm',
+                                                                        '.html', '.odt', '.eps', '.ps', '.wpd', '.hwp',
+                                                                        '.ppt', '.pptx', '.ppsx', '.pps'));
+
+                $mform->addElement('filemanager', 'submissionfile', get_string('filetosubmit', 'turnitintool'),
+                                        null, $turnitintoolfileuploadoptions);
                 $mform->addHelpButton('submissionfile', 'filetosubmit', 'turnitintool');
 
                 // Text input input.

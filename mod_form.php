@@ -63,19 +63,12 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addElement('hidden','portfolio',0);
         $mform->setType('portfolio', PARAM_RAW);
 
-        $maxtii=41943040;
-        if ($CFG->maxbytes>$maxtii) {
-            $maxbytes1=$maxtii;
-        } else {
-            $maxbytes1=$CFG->maxbytes;
-        }
-        if ($COURSE->maxbytes>$maxtii) {
-            $maxbytes2=$maxtii;
-        } else {
-            $maxbytes2=$COURSE->maxbytes;
-        }
+        $maxbytessite = ($CFG->maxbytes == 0 || $CFG->maxbytes > TURNITINTOOL_MAX_FILE_UPLOAD_SIZE) ?
+                            TURNITINTOOL_MAX_FILE_UPLOAD_SIZE : $CFG->maxbytes;
+        $maxbytescourse = ($COURSE->maxbytes == 0 || $COURSE->maxbytes > TURNITINTOOL_MAX_FILE_UPLOAD_SIZE) ?
+                            TURNITINTOOL_MAX_FILE_UPLOAD_SIZE : $COURSE->maxbytes;
 
-        $options=get_max_upload_sizes($maxbytes1, $maxbytes2);
+        $options = get_max_upload_sizes($maxbytessite, $maxbytescourse, TURNITINTOOL_MAX_FILE_UPLOAD_SIZE);
 
         $mform->addElement('select', 'maxfilesize', get_string('maxfilesize', 'turnitintool'), $options);
         turnitintool_modform_help_icon('maxfilesize', 'maxfilesize', 'turnitintool', $mform);

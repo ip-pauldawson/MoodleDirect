@@ -39,6 +39,10 @@ defined("TURNITINTOOL_ASSIGNMENT_WRONGCLASS_ERROR") or define("TURNITINTOOL_ASSI
  * in the Turnitin integrations database tables
  */
 defined("TURNITINTOOL_APISRC") or define("TURNITINTOOL_APISRC","12");
+/**
+ * Maximum file size that Turnitin will accept.
+ */
+define('TURNITINTOOL_MAX_FILE_UPLOAD_SIZE', 41943040);
 
 /**
  * Include the loaderbar class file
@@ -53,7 +57,7 @@ require_once(__DIR__."/comms.php");
  * Include the calendar class file.
  */
 require_once($CFG->dirroot . '/calendar/lib.php');
-
+ 
 /**
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
