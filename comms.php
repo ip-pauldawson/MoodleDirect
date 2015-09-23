@@ -1383,9 +1383,8 @@ class turnitintool_commclass {
      * Call to API FID21, FCMD1 to download inbox data bulk zip file
      *
      * @param object $post The post object that contains the necessary query parameters for the call
-     * @param string $status The status to pass to the loaderbar class
      */
-    function bulkDownload($post,$status) {
+    function bulkDownload($post) {
 
         $assigndata=array('gmtime'=>$this->tiiGmtime(),
                 'encrypt'=>TURNITINTOOL_ENCRYPT,
