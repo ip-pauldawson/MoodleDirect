@@ -1,3 +1,7 @@
+Please note, this repository has been superceded by http://github.com/turnitin/moodle-mod_turnitintool and will not be updated once the remaining open issues have been closed.
+
+Please use the new repository to make any future pull requests and raise any issues you may be encountering.
+
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
 Date:       2015-Aug-18
